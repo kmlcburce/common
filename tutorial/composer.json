@@ -1,6 +1,6 @@
 {
-    "name": "increment/image",
-    "description": "Image Handler Backend",
+    "name": "increment/tutorial",
+    "description": "Tutorial Handler Backend",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -13,13 +13,13 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Increment\\Common\\Image\\": "src/"
+            "Increment\\Common\\Tutorial\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Increment\\Common\\Image\\ImageServiceProvider"
+                "Increment\\Common\\Tutorial\\TutorialServiceProvider"
             ]
         }
 }
