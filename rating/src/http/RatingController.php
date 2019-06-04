@@ -72,7 +72,8 @@ class RatingController extends APIController
       return array(
         'total' => $totalRating,
         'size'  => $size,
-        'avg'   => $avg
+        'avg'   => $avg,
+        'stars' => round($avg)
       );
     }
 }
