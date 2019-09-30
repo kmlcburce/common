@@ -37,18 +37,5 @@ class NotificationController extends APIController
         'data' => sizeof($result) > 0 ? $result : null,
         'size' => sizeof($size)
       ));
-    }    
-
-    public function create($request){
-      $data = $request;
-      echo json_encode($data);
-      $notification = new Notification();
-      $notification->to = $data['to'];
-      $notification->from = $data['from'];
-      $notification->payload = $data['payload'];
-      $notification->payload_value = $data['payload_value'];
-      $notification->route = $data['route'];
-      $notification->created_at = Carbon::now();
-      $notification->save();
     }
 }
