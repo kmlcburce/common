@@ -1,0 +1,26 @@
+{
+    "name": "increment/invitation",
+    "description": "invitation Backend",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kennCK",
+            "email": "kennettecanales@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Increment\\Common\\Invitation\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Increment\\Common\\Invitation\\InvitationServiceProvider",
+            ]
+        }
+    }
+}
