@@ -14,7 +14,7 @@ class NotificationController extends APIController
 
     public function retrieve(Request $request){
       $data = $request->all();
-      $result = Notification::where('to', '=', $data['account_id'])->get();
+      $result = Notification::where('to', '=', $data['account_id'])->orderBy('created_at', 'desc')->get();
       $size = 0;
       $flag = false;
       if(sizeof($result) > 0){
@@ -22,12 +22,11 @@ class NotificationController extends APIController
         foreach ($result as $key) {
           if($flag == false && $result[$i]['updated_at'] == null){
             $size++;
-          }
-          if($flag == false && $result[$i]['updated_at'] != null){
+          }else if($flag == false && $result[$i]['updated_at'] != null){
             $flag = true;
           }
           $result[$i]['account'] = $this->retrieveAccountDetails($result[$i]['from']);
-          $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y');
+          $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
           if($result[$i]['payload'] == 'guarantor'){
             $result[$i]['title'] = 'Guarantor Notification';
             $result[$i]['description'] = 'You have been assigned as guarantor by '.$result[$i]['account']['username'];
@@ -40,21 +39,24 @@ class NotificationController extends APIController
           }else if($result[$i]['payload'] == 'invest'){
             $result[$i]['title'] = 'Investment Notification';
             $result[$i]['description'] = 'You have received a new investment from'.$result[$i]['account']['username'];
+          }else{
+            //
           }
           $i++;
         }
       }
       return response()->json(array(
         'data' => sizeof($result) > 0 ? $result : null,
-        'size' => sizeof($size)
+        'size' => $size
       ));
     }
 
     public function update(Request $request){
       $data = $request->all();
-      $data['updated_at'] = Carbon::now();
-      $this->model = new Notification();
-      $this->updateDB($data);
+      Notification::where('id', '=', $data['id'])->update(array(
+        'updated_at' => Carbon::now()
+      ));
+      $this->response['data'] = true;
       return $this->response();
     }
 
