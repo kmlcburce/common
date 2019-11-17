@@ -15,7 +15,7 @@ class NotificationController extends APIController
     public function retrieve(Request $request){
       $data = $request->all();
       $result = Notification::where('to', '=', $data['account_id'])->get();
-      $size =  Notification::where('to', '=', $data['account_id'])->get();
+      $size = sizeof($result);
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
