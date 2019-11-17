@@ -38,4 +38,9 @@ class NotificationController extends APIController
         'size' => sizeof($size)
       ));
     }
+
+    public function createByParams($parameter){
+      Notification::insert($parameter);
+      return true;
+    }
 }
