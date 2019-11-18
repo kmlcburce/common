@@ -68,12 +68,12 @@ class NotificationController extends APIController
 
     public function createByParams($parameter){
       $model = new Notification();
-      $model->from = $data['from'];
-      $model->to = $data['to'];
-      $model->payload = $data['payload'];
-      $model->payload_value = $data['payload_value'];
-      $model->route = $data['route'];
-      $model->created_at = $data['created_at'];
+      $model->from = $parameter['from'];
+      $model->to = $parameter['to'];
+      $model->payload = $parameter['payload'];
+      $model->payload_value = $parameter['payload_value'];
+      $model->route = $parameter['route'];
+      $model->created_at = $parameter['created_at'];
       $model->save();
       $result = Notification::where('id', '=', $model->id)->get();
       $result = $this->manageResult($result[0]);
