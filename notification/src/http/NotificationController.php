@@ -74,6 +74,7 @@ class NotificationController extends APIController
       $model->payload_value = $parameter['payload_value'];
       $model->route = $parameter['route'];
       $model->created_at = $parameter['created_at'];
+      $model->updated_at = null;
       $model->save();
       $result = Notification::where('id', '=', $model->id)->get();
       $result = $this->manageResult($result[0]);
