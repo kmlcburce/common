@@ -50,7 +50,7 @@ class NotificationController extends APIController
           $result['description'] = 'An email has been sent to your email address';
         }else if($result['payload'] == 'invest'){
           $result['title'] = 'Investment Notification';
-          $result['description'] = 'You have received a new investment from'.$result['account']['username'];
+          $result['description'] = 'You have received a new investment from '.$result['account']['username'];
         }else{
           //
         }
