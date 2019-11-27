@@ -78,7 +78,7 @@ class NotificationController extends APIController
       $model->save();
       $result = Notification::where('id', '=', $model->id)->get();
       $result = $this->manageResult($result[0]);
-      // Notifications::dispatch('notification', $result[0]);
+      Notifications::dispatch('notification', $result[0]);
       return true;
     }
 }
