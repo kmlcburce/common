@@ -26,7 +26,7 @@ class NotificationController extends APIController
           }else if($flag == false && $result[$i]['updated_at'] != null){
             $flag = true;
           }
-          $result[$i] = $this->manageResult($result[$i]);
+          $result[$i] = $this->manageResult($result[$i], false);
           $i++;
         }
       }
@@ -36,23 +36,26 @@ class NotificationController extends APIController
       ));
     }
 
-    public function manageResult($result){
-        $result['account'] = $this->retrieveAccountDetails($result['from']);
+    public function manageResult($result, $notify = false){
+        $account = $this->retrieveAccountDetails($result['from']);
         $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
         if($result['payload'] == 'guarantor'){
           $result['title'] = 'Guarantor Notification';
-          $result['description'] = 'You have been assigned as guarantor by '.$result['account']['username'];
+          $result['description'] = 'You have been assigned as guarantor by '.$account['username'];
         }else if($result['payload'] == 'comaker'){
           $result['title'] = 'Comaker Notification';
-          $result['description'] = 'You have been assigned as comaker by '.$result['account']['username'];
+          $result['description'] = 'You have been assigned as comaker by '.$account['username'];
         }else if($result['payload'] == 'mail'){
           $result['title'] = 'Mail Notification';
           $result['description'] = 'An email has been sent to your email address';
         }else if($result['payload'] == 'invest'){
           $result['title'] = 'Investment Notification';
-          $result['description'] = 'You have received a new investment from '.$result['account']['username'];
+          $result['description'] = 'You have received a new investment from '.$account['username'];
         }else{
           //
+        }
+        if($notify == true){
+          Notifications::dispatch('notifications', $result->toArray());
         }
         return $result;
     }
@@ -77,8 +80,7 @@ class NotificationController extends APIController
       $model->updated_at = null;
       $model->save();
       $result = Notification::where('id', '=', $model->id)->get();
-      $result = $this->manageResult($result[0]);
-      Notifications::dispatch('notification', $result[0]);
+      $this->manageResult($result[0], true);
       return true;
     }
 }
