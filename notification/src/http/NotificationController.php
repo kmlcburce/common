@@ -51,6 +51,9 @@ class NotificationController extends APIController
         }else if($result['payload'] == 'invest'){
           $result['title'] = 'Investment Notification';
           $result['description'] = 'You have received a new investment from '.$account['username'];
+        }else if($result['payload'] == 'request'){
+          $result['title'] = 'Request Notification';
+          $result['description'] = 'You have received a peer request from '.$account['username'];
         }else{
           //
         }
