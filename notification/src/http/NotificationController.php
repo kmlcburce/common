@@ -54,6 +54,9 @@ class NotificationController extends APIController
         }else if($result['payload'] == 'request'){
           $result['title'] = 'Request Notification';
           $result['description'] = 'You have received a peer request from '.$account['username'];
+        }else if($result['payload'] == 'thread'){
+          $result['title'] = 'Thread Notification';
+          $result['description'] = 'You have received a message thread from '.$account['username'];
         }else{
           //
         }
