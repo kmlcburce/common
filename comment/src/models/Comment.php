@@ -9,5 +9,10 @@ class Comment extends APIModel
 {
     protected $table = 'comments';
     protected $fillable = ['account_id', 'payload', 'payload_value', 'text'];
+
+    public function getAccountIdAttribute($value){
+      return intval($value);
+    }
+
 }
 

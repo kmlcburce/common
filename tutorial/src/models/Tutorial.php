@@ -9,5 +9,10 @@ class Tutorial extends APIModel
 {
     protected $table = 'tutorials';
     protected $fillable = ['account_id'];
+
+    public function getAccountIdAttribute($value){
+      return intval($value);
+    }
+
 }
 

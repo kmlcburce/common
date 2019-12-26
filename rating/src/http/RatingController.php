@@ -13,9 +13,18 @@ class RatingController extends APIController
 
     public function create(Request $request){
       $data = $request->all();
-
-      $result = Rating::where('account_id', '=', $data['account_id'])
+      $result = array();
+      if($data['status'] == 'partial'){
+        $result = Rating::where('account_id', '=', $data['account_id'])
       ->where('payload', '=', $data['payload'])->where('payload_value', '=', $data['payload_value'])->get();
+      }else{
+         $result = Rating::where('account_id', '=', $data['account_id'])
+        ->where('payload', '=', $data['payload'])
+        ->where('payload_value', '=', $data['payload_value'])
+        ->where('payload_1', '=', $data['payload_1'])
+        ->where('payload_value_1', '=', $data['payload_value_1'])->get();
+      }
+      
       if(sizeof($result) > 0){
         $this->model = new Rating();
         $this->response['error']['message'] = "You've submitted reviews already.";
@@ -54,6 +63,13 @@ class RatingController extends APIController
       ->where('payload_value', '=', $payloadValue)
       ->get();
       return (sizeof($result) > 0) ? true : false;
+    }
+
+    public function getByParams($accountId, $payload1, $payloadValue1){
+      $rating = Rating::where('account_id', '=', $accountId)
+                ->where('payload_1', '=', $payload1)
+                ->where('payload_value_1', '=', $payloadValue1)->get();
+      return sizeof($rating) > 0 ? $rating[0] : null;
     }
 
     public function getRatingByPayload($payload, $payloadValue){

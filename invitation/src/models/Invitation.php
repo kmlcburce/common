@@ -7,4 +7,9 @@ class Invitation extends APIModel
 {
     protected $table = 'invitations';
     protected $fillable = ['code', 'account_id', 'address', 'status'];
+
+    public function getAccountIdAttribute($value){
+      return intval($value);
+    }
+
 }
