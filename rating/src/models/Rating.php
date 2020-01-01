@@ -8,7 +8,7 @@ use App\APIModel;
 class Rating extends APIModel
 {
     protected $table = 'ratings';
-    protected $fillable = ['account_id', 'payload', 'payload_value', 'value'];
+    protected $fillable = ['account_id', 'payload', 'payload_value','payload_1', 'payload_value_1', 'value', 'comments'];
 
     public function getAccountIdAttribute($value){
       return intval($value);

@@ -9,6 +9,9 @@ class RatingController extends APIController
 {
     function __construct(){
       $this->model = new Rating();
+      $this->notRequired = array(
+        'comments'
+      );
     }
 
     public function create(Request $request){
