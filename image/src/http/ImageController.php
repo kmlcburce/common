@@ -78,6 +78,7 @@ class ImageController extends APIController
         $filename = $data['account_id'].'_'.$date.'_'.$time.'.png';
         $image = base64_decode($data['file_base64']);
         Storage::disk('local')->put('images/'.$filename, $image);
+        $url = '/storage/image/'.$filename;
         $this->response['data'] = $url;
         return $this->response();
       }
