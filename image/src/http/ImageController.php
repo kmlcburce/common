@@ -50,4 +50,24 @@ class ImageController extends APIController
       ));
     }
 
+    public function uploadUnlink(Request $request){
+      $data = $request->all();
+      if(isset($data['file_url'])){
+        $date = Carbon::now()->toDateString();
+        $time = str_replace(':', '_',Carbon::now()->toTimeString());
+        $ext = $request->file('file')->extension();
+        $filename = $data['account_id'].'_'.$date.'_'.$time.'.'.$ext;
+        $result = $request->file('file')->storeAs('images', $filename);
+        $url = '/storage/image/'.$filename;
+        $this->model = new Image();
+        $this->response['data'] = $url;
+        return $this->response();
+      }
+      return response()->json(array(
+        'data'  => null,
+        'error' => null,
+        'timestamps' => Carbon::now()
+      ));
+    }
+
 }
