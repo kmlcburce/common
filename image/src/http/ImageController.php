@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Increment\Common\Image\Models\Image;
 use App\Http\Controllers\APIController;
+use Illuminate\Support\Facades\Storage;
 class ImageController extends APIController
 {
     function __construct(){
@@ -59,6 +60,24 @@ class ImageController extends APIController
         $filename = $data['account_id'].'_'.$date.'_'.$time.'.'.$ext;
         $result = $request->file('file')->storeAs('images', $filename);
         $url = '/storage/image/'.$filename;
+        $this->response['data'] = $url;
+        return $this->response();
+      }
+      return response()->json(array(
+        'data'  => null,
+        'error' => null,
+        'timestamps' => Carbon::now()
+      ));
+    }
+
+    public function uploadBase64(Request $request){
+      $data = $request->all();
+      if(isset($data['file_base64'])){
+        $date = Carbon::now()->toDateString();
+        $time = str_replace(':', '_',Carbon::now()->toTimeString());
+        $filename = $data['account_id'].'_'.$date.'_'.$time.'.png';
+        $image = base64_decode($data['file_base64']);
+        Storage::disk('images')->put($filename, $image);
         $this->response['data'] = $url;
         return $this->response();
       }

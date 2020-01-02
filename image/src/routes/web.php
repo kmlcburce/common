@@ -5,6 +5,7 @@ Route::post($route.'create', $controller."create");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'update', $controller."update");
 Route::post($route.'upload', $controller."upload");
+Route::post($route.'upload_base64', $controller."uploadBase64");
 Route::post($route.'upload_un_link', $controller."uploadUnLink");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller."test");
