@@ -77,7 +77,7 @@ class ImageController extends APIController
         $time = str_replace(':', '_',Carbon::now()->toTimeString());
         $filename = $data['account_id'].'_'.$date.'_'.$time.'.png';
         $image = base64_decode($data['file_base64']);
-        Storage::disk('public')->put('images/'.$filename, $image);
+        Storage::disk('local')->put('images/'.$filename, $image);
         $this->response['data'] = $url;
         return $this->response();
       }
