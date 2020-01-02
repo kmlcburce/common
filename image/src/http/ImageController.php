@@ -59,7 +59,6 @@ class ImageController extends APIController
         $filename = $data['account_id'].'_'.$date.'_'.$time.'.'.$ext;
         $result = $request->file('file')->storeAs('images', $filename);
         $url = '/storage/image/'.$filename;
-        $this->model = new Image();
         $this->response['data'] = $url;
         return $this->response();
       }
