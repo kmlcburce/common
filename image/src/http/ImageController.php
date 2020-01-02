@@ -50,7 +50,7 @@ class ImageController extends APIController
       ));
     }
 
-    public function uploadUnlink(Request $request){
+    public function uploadUnLink(Request $request){
       $data = $request->all();
       if(isset($data['file_url'])){
         $date = Carbon::now()->toDateString();
