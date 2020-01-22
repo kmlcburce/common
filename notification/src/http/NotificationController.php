@@ -37,8 +37,9 @@ class NotificationController extends APIController
     }
 
     public function manageResult($result, $notify = false){
+        $this->localization();
         $account = $this->retrieveAccountDetails($result['from']);
-        $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
+        $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         if($result['payload'] == 'guarantor'){
           $result['title'] = 'Guarantor Notification';
           $result['description'] = 'You have been assigned as guarantor by '.$account['username'];

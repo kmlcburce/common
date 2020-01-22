@@ -23,7 +23,7 @@ class CommentController extends APIController
         foreach ($result as $key) {
           $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($result[$i]['account_id']);
           $this->response['data'][$i]['comment_replies'] = $this->getReplies($result[$i]['id']);
-          $this->response['data'][$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
+          $this->response['data'][$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
           $this->response['data'][$i]['new_reply_flag'] = false;
           $i++;
         }
@@ -32,13 +32,13 @@ class CommentController extends APIController
     }
 
     public function getReplies($commentId){
+      $this->localization();
       $result = CommentReply::where('comment_id', '=', $commentId)->orderBy('created_at', 'ASC')->get();
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
           $result[$i]['account'] = $this->retrieveAccountDetails($result[$i]['account_id']);
-
-          $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz('Asia/Manila')->format('F j, Y h:i A');
+          $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
           $i++;
         }
         return $result;
