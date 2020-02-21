@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Storage;
 class ImageController extends APIController
 {
     function __construct(){
+      if($this->checkAuthenticatedUser() == false){
+        return $this->response();
+      }
       $this->model = new Image();
     }
 

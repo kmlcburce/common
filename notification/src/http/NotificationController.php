@@ -10,6 +10,9 @@ use App\Jobs\Notifications;
 class NotificationController extends APIController
 {
     function __construct(){
+      if($this->checkAuthenticatedUser() == false){
+        return $this->response();
+      }
       $this->model = new Notification();
     }
 

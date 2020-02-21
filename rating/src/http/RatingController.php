@@ -8,6 +8,9 @@ use Increment\Common\Rating\Models\Rating;
 class RatingController extends APIController
 {
     function __construct(){
+      if($this->checkAuthenticatedUser() == false){
+        return $this->response();
+      }
       $this->model = new Rating();
       $this->notRequired = array(
         'comments'
