@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Increment\Common\System\Models\SystemNotification;
 use App\Http\Controllers\APIController;
+use App\Jobs\Notifications;
 class SystemNotificationController extends APIController
 {
     function __construct(){
@@ -16,6 +17,10 @@ class SystemNotificationController extends APIController
       $data['code'] = $this->generateCode();
       $this->model = new SystemNotification();
       $this->insertDB($data);
+      if($this->response['data'] > 0){
+        $data['id'] = $this->response['data'];
+        Notifications::dispatch('system_notification', $data);
+      }
       return $this->response();
     }
 
