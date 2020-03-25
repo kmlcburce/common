@@ -30,7 +30,7 @@ class InvitationController extends APIController
    		$this->model = new Invitation();
    		$this->insertDB($insertData);
    		if($this->response['data'] > 0 && $user != null){
-   			Mail::to($data['to_email'])->send(new Referral($user, $data['content'], $data['to_email'], $this->getDetails($this->response['data'])));
+   			Mail::to($data['to_email'])->send(new Referral($user, $data['content'], $data['to_email'], $this->getDetails($this->response['data']), $this->response['timezone']));
    		}
    		return $this->response();
 		}else{
