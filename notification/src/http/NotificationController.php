@@ -63,7 +63,13 @@ class NotificationController extends APIController
           $result['description'] = 'You have received a message thread from '.$account['username'];
         }else if($result['payload'] == 'ledger'){
           $result['title'] = 'Ledger Notification';
-          $result['description'] = 'You have an activity with your ledger.';
+          $result['description'] = 'You have an activity on your ledger.';
+        }else if($result['payload'] == 'installment'){
+          $result['title'] = 'Installment Notification';
+          $result['description'] = 'You have an activity on your installment.';
+        }else if($result['payload'] == 'rental'){
+          $result['title'] = 'Rental Notification';
+          $result['description'] = 'You have an activity on your rental.';
         }else{
           //
         }
