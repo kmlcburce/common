@@ -64,8 +64,15 @@ class NotificationController extends APIController
         }else if($result['payload'] == 'ledger'){
           $result['title'] = 'Ledger Notification';
           $result['description'] = 'You have an activity with your ledger.';
+        }else if($result['payload'] == 'form_request'){
+          $result['title'] = 'Health Declaration Form';
+          $result['description'] = 'You need to fill up the form requested.';
+        }else if($result['payload'] == 'form_submitted'){
+          $result['title'] = 'Health Declaration Form';
+          $result['description'] = 'New form submitted.';
         }else{
-          //
+          // $result['title'] = 'Notification';
+          // $result['description'] = 'You have an activity with your ledger.';
         }
         if($notify == true){
           Notifications::dispatch('notifications', $result->toArray());
