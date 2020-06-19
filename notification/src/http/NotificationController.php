@@ -66,10 +66,16 @@ class NotificationController extends APIController
           $result['description'] = 'You have an activity with your ledger.';
         }else if($result['payload'] == 'form_request'){
           $result['title'] = 'Health Declaration Form';
-          $result['description'] = 'You need to fill up the form requested.';
+          $result['description'] = 'You need to fill up the health declaration form.';
         }else if($result['payload'] == 'form_submitted'){
           $result['title'] = 'Health Declaration Form';
           $result['description'] = 'New form submitted.';
+        }else if($result['payload'] == 'installment'){
+          $result['title'] = 'Installment Notification';
+          $result['description'] = 'You have an activity on your installment.';
+        }else if($result['payload'] == 'rental'){
+          $result['title'] = 'Rental Notification';
+          $result['description'] = 'You have an activity on your rental.';
         }else{
           // $result['title'] = 'Notification';
           // $result['description'] = 'You have an activity with your ledger.';
