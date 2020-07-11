@@ -64,12 +64,24 @@ class NotificationController extends APIController
         }else if($result['payload'] == 'ledger'){
           $result['title'] = 'Ledger Notification';
           $result['description'] = 'You have an activity with your ledger.';
-        }else if($result['payload'] == 'form_request'){
-          $result['title'] = 'Health Declaration Form';
+        }else if(explode('/', $result['payload'])[0] == 'form_request' && explode('/', $result['payload'])[1] == 'customer'){
+          $result['title'] = 'Customer Health Declaration Form';
           $result['description'] = 'You need to fill up the health declaration form.';
-        }else if($result['payload'] == 'form_submitted'){
+        }else if(explode('/', $result['payload'])[0] == 'form_request' && explode('/', $result['payload'])[1] == 'employee_checkin'){
+          $result['title'] = 'Checkin Health Declaration Form';
+          $result['description'] = 'You need to fill up the health declaration form.';
+        }else if(explode('/', $result['payload'])[0] == 'form_request' && explode('/', $result['payload'])[1] == 'employee_checkout'){
+          $result['title'] = 'Checkout Health Declaration Form';
+          $result['description'] = 'You need to fill up the health declaration form.';
+        }else if(explode('/', $result['payload'])[0] == 'form_submitted' && explode('/', $result['payload'])[1] == 'customer'){
           $result['title'] = 'Health Declaration Form';
-          $result['description'] = 'New form submitted.';
+          $result['description'] = 'Customer form submitted.';
+        }else if(explode('/', $result['payload'])[0] == 'form_submitted' && explode('/', $result['payload'])[1] == 'employee_checkin'){
+          $result['title'] = 'Health Declaration Form';
+          $result['description'] = 'Employee checkin form submitted.';
+        }else if(explode('/', $result['payload'])[0] == 'form_submitted' && explode('/', $result['payload'])[1] == 'employee_checkout'){
+          $result['title'] = 'Health Declaration Form';
+          $result['description'] = 'Employee checkout form submitted.';
         }else if($result['payload'] == 'installment'){
           $result['title'] = 'Installment Notification';
           $result['description'] = 'You have an activity on your installment.';
