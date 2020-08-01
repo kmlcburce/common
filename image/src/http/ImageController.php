@@ -35,7 +35,7 @@ class ImageController extends APIController
         $date = Carbon::now()->toDateString();
         $time = str_replace(':', '_',Carbon::now()->toTimeString());
         $ext = $request->file('file')->extension();
-        $filename = $data['file_url'];
+        $filename = $data['account_id'].'_'.$date.'_'.$time.'_'.$data['file_url'];
         $result = $request->file('file')->storeAs('images', $filename);
         $url = '/storage/image/'.$filename;
         $this->model = new Image();
