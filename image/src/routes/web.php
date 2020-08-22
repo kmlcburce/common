@@ -25,5 +25,7 @@ Route::get($route.'/storage/image/{filename}', function ($filename)
     $response = Response::make($file, 200);
     $response->header("Content-Type", $type);
 
+    var_dump($file);
+
     return 'hello';
 });
