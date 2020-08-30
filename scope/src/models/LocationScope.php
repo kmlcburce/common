@@ -3,8 +3,8 @@
 namespace Increment\Common\Scope\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
-class ScopeLocation extends APIModel
+class LocationScope extends APIModel
 {
-  protected $table = 'scope_locations';
+  protected $table = 'location_scopes';
   protected $fillable = ['code', 'scope', 'city', 'region', 'country'];
 }
