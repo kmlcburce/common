@@ -37,7 +37,7 @@ class ImageController extends APIController
         $ext = $request->file('file')->extension();
         // $fileUrl = str_replace(' ', '_', $data['file_url']);
         // $fileUrl = str_replace('%20', '_', $fileUrl);
-        $filename = $data['account_id'].'_'.$date.'_'.$time.'.'.$ext;
+        $filename = $data['account_id'].'_'.$date.'_'.$time.'_'.$data['file_url'];
         $result = $request->file('file')->storeAs('images', $filename);
         $url = '/storage/image/'.$filename;
         $this->model = new Image();
@@ -62,7 +62,7 @@ class ImageController extends APIController
         $date = Carbon::now()->toDateString();
         $time = str_replace(':', '_',Carbon::now()->toTimeString());
         $ext = $request->file('file')->extension();
-        $filename = $data['account_id'].'_'.$date.'_'.$time.'.'.$ext;
+        $filename = $data['account_id'].'_'.$date.'_'.$time.'_'.$data['file_url'];
         $result = $request->file('file')->storeAs('images', $filename);
         $url = '/storage/image/'.$filename;
         $this->response['data'] = $url;
@@ -80,7 +80,7 @@ class ImageController extends APIController
       if(isset($data['file_base64'])){
         $date = Carbon::now()->toDateString();
         $time = str_replace(':', '_',Carbon::now()->toTimeString());
-        $filename = $data['account_id'].'_'.$date.'_'.$time.'.png';
+        $filename = $data['account_id'].'_'.$date.'_'.$data['file_url'];
         $image = base64_decode($data['file_base64']);
         Storage::disk('local')->put('images/'.$filename, $image);
         $url = '/storage/image/'.$filename;
