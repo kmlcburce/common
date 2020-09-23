@@ -1,0 +1,14 @@
+{
+    "name": "user/payload",
+    "description": "Payload Module",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ean Velayo",
+            "email": "ecvelayo@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
