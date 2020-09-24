@@ -1,0 +1,14 @@
+{
+    "name": "ecvel/payload",
+    "description": "Payload Module",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ecvelayo",
+            "email": "ecvelayo@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
