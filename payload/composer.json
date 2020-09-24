@@ -1,11 +1,19 @@
 {
+<<<<<<< HEAD
     "name": "ecvel/payload",
+=======
+    "name": "user/payload",
+>>>>>>> 98be819c74ac4419162a89fdf92c44ee06421729
     "description": "Payload Module",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
+<<<<<<< HEAD
             "name": "ecvelayo",
+=======
+            "name": "Ean Velayo",
+>>>>>>> 98be819c74ac4419162a89fdf92c44ee06421729
             "email": "ecvelayo@gmail.com"
         }
     ],
