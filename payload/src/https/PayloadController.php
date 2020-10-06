@@ -11,9 +11,6 @@ class PayloadController extends APIController
       if($this->checkAuthenticatedUser() == false){
         return $this->response();
       }
-    $this->notRequired = array(
-      'preparation_time'
-    );
       $this->model = new Payload();
     }
 }
