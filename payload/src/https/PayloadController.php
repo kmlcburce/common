@@ -13,8 +13,4 @@ class PayloadController extends APIController
       }
       $this->model = new Payload();
     }
-
-    public function create(){
-      
-    }
 }
