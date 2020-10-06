@@ -1,6 +1,6 @@
 <?php
 
-namespace Increment\Common\Rating;
+namespace Increment\Common\Payload;
 
 use Illuminate\Support\ServiceProvider;
 
