@@ -106,6 +106,6 @@ class RatingController extends APIController
         ->where('payload_1', '=', $payload1)
         ->where('payload_value_1', '=', $payloadValue1)
         ->get();
-      return sizeof($rating) > 0 ? $rating[0] : null;
+      return sizeof($rating) > 0 ? $rating[0]['value'] : null;
     }
 }
