@@ -11,10 +11,7 @@ class PayloadController extends APIController
       if($this->checkAuthenticatedUser() == false){
         return $this->response();
       }
-      $this->model = new Payload();
-    }
-
-    public function create(){
       
+      $this->model = new Payload();
     }
 }
