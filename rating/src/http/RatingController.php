@@ -98,4 +98,14 @@ class RatingController extends APIController
         'stars' => round($avg)
       );
     }
+
+    public function getRatingByPayload2($accountId, $payload, $payloadValue, $payload1, $payloadValue1){
+      $rating = Rating::where('account_id', '=', $accountId)
+        ->where('payload', '=', $payload)
+        ->where('payload_value', '=', $payloadValue)
+        ->where('payload_1', '=', $payload1)
+        ->where('payload_value_1', '=', $payloadValue1)
+        ->get();
+      return sizeof($rating) > 0 ? $rating[0] : null;
+    }
 }
