@@ -34,4 +34,10 @@ class PayloadController extends APIController
             ->get();
       return $id;
     }
+
+    public function getRiderSchedule(Request $request){
+      $data = $request->all();
+      //rider schedule json
+      //{startTime: string, endTime: string, days: 0123456 <- representing duty days, validity: <- date started using said schedule}
+    }
 }
