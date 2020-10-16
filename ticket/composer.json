@@ -1,0 +1,26 @@
+{
+    "name": "ecvel/ticket",
+    "description": "Ticket Module",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ecvelayo",
+            "email": "ecvelayo@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Increment\\Common\\Ticket\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Increment\\Common\\Ticket\\TicketServiceProvider"
+            ]
+        }
+    }
+}
