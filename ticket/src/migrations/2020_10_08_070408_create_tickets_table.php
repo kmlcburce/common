@@ -21,7 +21,7 @@ class CreateTicketsTable extends Migration
             $table->string('type');
             $table->longText('content');
             $table->string('status');
-            $table->bigIntegers('assigned_to')->nullable();
+            $table->bigInteger('assigned_to')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

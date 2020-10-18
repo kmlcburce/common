@@ -1,7 +1,7 @@
 <?php
 
 $route = env('PACKAGE_ROUTE', '').'/tickets/';
-$controller = 'Increment\Imarket\Delivery\Http\TicketController@';
+$controller = 'Increment\Common\Ticket\Http\TicketController@';
 Route::post($route.'create', $controller."create");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'update', $controller."update");
