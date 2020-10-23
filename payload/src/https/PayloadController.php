@@ -21,6 +21,7 @@ class PayloadController extends APIController
       $payloadValue['url'] = $data['file_url'];
       $payloadValue['status'] = 'PENDING';
       $data['payload'] = 'valid_id';
+      $values = json_encode($values);
       $data['payload_value'] = $payloadValue;
       $this->model = new Payload();
       $this->insertDB($data);
@@ -55,6 +56,7 @@ class PayloadController extends APIController
       $values['endTime'] = $request['endTime'];
       $values['days'] = $request['days'];
       $values['validity'] = $request['validity'];
+      $values = json_encode($values);
       $data['payload_values'] = $values;
       $this->model = new Payload();
       $this->insertDB($data);
@@ -67,9 +69,20 @@ class PayloadController extends APIController
       $values = array();
       $values['question'] = $data['question'];
       $values['answer'] = $data['answer'];
-      $data['payload_values'] = $values;
+      $values = json_encode($values);
+      $data['payload_value'] = $values;
       $this->model = new Payload();
       $this->insertDB($data);
       return $this->response();
+    }
+
+    public function createCategory(Request $request){
+      $data = $request->all();
+      $data['payload'] = 'category';
+      
+      //payload values would look like this
+      //american, burger, fries, fastfood
+      //payload_id would be linked to category in product same with tags ??
+    
     }
 }

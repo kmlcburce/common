@@ -17,9 +17,9 @@ class TicketController extends APIController
         $this->notRequired = array('assigned_to');
       }
     
-    // public function resolveTicket(Request $request){
-    //   //check authenticated user
-    //   //TODO: add authentication here
-    //   //Ticket::where('')
-    // }
+    public function resolveTicket(Request $request){
+      //check authenticated user
+      //TODO: add authentication here
+      // Ticket::where('')
+    }
 }
