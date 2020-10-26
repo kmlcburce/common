@@ -34,7 +34,7 @@ class ImageController extends APIController
       if(isset($data['file_url'])){
         $date = Carbon::now()->toDateString();
         $time = str_replace(':', '_',Carbon::now()->toTimeString());
-        $ext = $request->file('file')->extension();
+        // $ext = $request->file('file')->extension();
         // $fileUrl = str_replace(' ', '_', $data['file_url']);
         // $fileUrl = str_replace('%20', '_', $fileUrl);
         $filename = $data['account_id'].'_'.$date.'_'.$time.'_'.$data['file_url'];
@@ -61,7 +61,7 @@ class ImageController extends APIController
       if(isset($data['file_url'])){
         $date = Carbon::now()->toDateString();
         $time = str_replace(':', '_',Carbon::now()->toTimeString());
-        $ext = $request->file('file')->extension();
+        // $ext = $request->file('file')->extension();
         $filename = $data['account_id'].'_'.$date.'_'.$time.'_'.$data['file_url'];
         $result = $request->file('file')->storeAs('images', $filename);
         $url = '/storage/image/'.$filename;
