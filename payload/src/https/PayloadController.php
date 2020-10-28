@@ -13,6 +13,7 @@ class PayloadController extends APIController
         return $this->response();
       }
       $this->model = new Payload();
+      $this->notRequired = array('category');
     }
 
     public function uploadValidId(Request $request){
@@ -21,8 +22,8 @@ class PayloadController extends APIController
       $payloadValue['url'] = $data['file_url'];
       $payloadValue['status'] = 'PENDING';
       $data['payload'] = 'valid_id';
-      $values = json_encode($values);
-      $data['payload_value'] = $payloadValue;
+      $values = json_encode($payloadValue);
+      $data['payload_value'] = $values;
       $this->model = new Payload();
       $this->insertDB($data);
       return $this->response();
