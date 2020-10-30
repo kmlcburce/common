@@ -90,11 +90,8 @@ class PayloadController extends APIController
 
     public function createCategory(Request $request){
       $data = $request->all();
-      $data['payload'] = 'category';
-      $values = array();
-      $values['tags'] = $data['tag'];
-      $values = json_encode($values);
-      $data['payload_value'] = $values;
+      $data['payload'] = 'product_category';
+      $data['payload_value'] = $data['product_category'];
       $this->model = new Payload();
       $this->insertDB($data);
       return $this->response();
@@ -103,10 +100,12 @@ class PayloadController extends APIController
       //payload_id would be linked to category in product same with tags ??
     }
 
-    public function getCategory(Request $request){
+    public function getCategoryForMerchant(Request $request){
       $data = $request->all();
-      if (isset($data['category'])){
-        $value = Payload::where('payload', '=', 'category')->where('category','=', $data['category'])->get();
+      if (isset($data['account_id'])){
+        $value = Payload::where('payload', '=', 'product_category')->where('account_id','=', $data['account_id'])->get();
+      }else{
+        $value = Payload::where('payload', '=', 'product_category');
       }
       $this->response['data'] = $value;
       return $this->response();
