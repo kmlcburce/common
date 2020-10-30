@@ -77,13 +77,38 @@ class PayloadController extends APIController
       return $this->response();
     }
 
+    public function getResource(Request $request){
+      $data = $request->all();
+      if (isset($data['id'])){
+        $value = Payload::where('id', '=', $data['id'])->where('payload', '=', $data['payload'])->get();
+      }else if (isset($data['account_id'])){
+        $value = Payload::where('account_id', '=', $data['account_id'])->where('payload', '=', $data['payload'])->get();
+      }
+      $this->response['data'] = $value;
+      return $this->response();
+    }
+
     public function createCategory(Request $request){
       $data = $request->all();
       $data['payload'] = 'category';
-      
+      $values = array();
+      $values['tags'] = $data['tag'];
+      $values = json_encode($values);
+      $data['payload_value'] = $values;
+      $this->model = new Payload();
+      $this->insertDB($data);
+      return $this->response();
       //payload values would look like this
       //american, burger, fries, fastfood
       //payload_id would be linked to category in product same with tags ??
-    
+    }
+
+    public function getCategory(Request $request){
+      $data = $request->all();
+      if (isset($data['category'])){
+        $value = Payload::where('payload', '=', 'category')->where('category','=', $data['category'])->get();
+      }
+      $this->response['data'] = $value;
+      return $this->response();
     }
 }
