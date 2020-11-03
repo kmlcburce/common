@@ -9,7 +9,7 @@ class Ticket extends APIModel
 {
     //
     protected $table = 'tickets';
-    protected $fillable = ['code', 'complete_name', 'email_address', 'type', 'content', 'status', 'assigned_to'];
+    protected $fillable = ['code', 'complete_name', 'email_address', 'type', 'content', 'images', 'status', 'assigned_to'];
 }
 
 

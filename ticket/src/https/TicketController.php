@@ -14,12 +14,34 @@ class TicketController extends APIController
           return $this->response();
         }
         $this->model = new Ticket();
-        $this->notRequired = array('assigned_to');
+        $this->notRequired = array('assigned_to', 'images');
       }
     
+    public function generateCode(){
+      $code = 'tic_'.substr(str_shuffle($this->codeSource), 0, 60);
+      $codeExist = Ticket::where('id', '=', $code)->get();
+      if(sizeof($codeExist) > 0){
+        $this->generateCode();
+      }else{
+        return $code;
+      }
+    }
+
+    public function create(Request $request){
+      $data = $request->all();
+      $data['code'] = $this->generateCode();
+      $data['status'] = 'OPEN';
+      $this->model = new Ticket();
+      $this->insertDB($data);
+      return $this->response();
+    }
+
     public function resolveTicket(Request $request){
       //check authenticated user
       //TODO: add authentication here
-      // Ticket::where('')
+      $data = $request->all();
+      $result = Ticket::where('code', '=', $data['code'])->update(array('status' => 'CLOSED'));
+      $this->response['data'] = $result ? true : false;
+      return $this->response();
     }
 }
