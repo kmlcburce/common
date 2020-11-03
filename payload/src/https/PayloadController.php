@@ -100,12 +100,12 @@ class PayloadController extends APIController
       //payload_id would be linked to category in product same with tags ??
     }
 
-    public function getCategoryForMerchant(Request $request){
+    public function getCategory(Request $request){
       $data = $request->all();
       if (isset($data['account_id'])){
         $value = Payload::where('payload', '=', 'product_category')->where('account_id','=', $data['account_id'])->get();
       }else{
-        $value = Payload::where('payload', '=', 'product_category');
+        $value = Payload::where('payload', '=', 'product_category')->get();
       }
       $this->response['data'] = $value;
       return $this->response();
