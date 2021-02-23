@@ -41,7 +41,7 @@ class NotificationController extends APIController
 
     public function manageResult($result, $notify = false){
         $this->localization();
-        $account = $this->retrieveAccountDetails($result['from']);
+        $account = $this->retrieveAccountDetailsOnRequests($result['from']);
         $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         if($result['payload'] == 'guarantor'){
           $result['title'] = 'Guarantor Notification';
@@ -101,7 +101,7 @@ class NotificationController extends APIController
           // $result['description'] = 'You have an activity with your ledger.';
         }
         if($notify == true){
-          Notifications::dispatch('notifications', $result->toArray());
+          Notifications::dispatch('notifications', $result);
         }
         return $result;
     }
