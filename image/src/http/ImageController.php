@@ -61,7 +61,7 @@ class ImageController extends APIController
         $insertData = array(
           'account_id'    => $data['account_id'],
           'url'           => $url,
-          'category'      => $data['category']
+          'category'      => isset($data['category']) ? $data['category'] : null
         );
         $this->insertDB($insertData);
         $this->response['data'] = $url;
