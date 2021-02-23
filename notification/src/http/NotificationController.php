@@ -63,8 +63,8 @@ class NotificationController extends APIController
           $response = array(
             'message' => "Your proposal was accepted",
             'title'   => "New Thread Message",
-            'type'    => 'Notifications',
-            'topic'   => 'Notifications',
+            'type'    => 'notifications',
+            'topic'   => 'notifications',
             // 'payload'    => $result['payload'],
             'payload_value' => $result['payload_value'],
             'route'   => $result['route'],
