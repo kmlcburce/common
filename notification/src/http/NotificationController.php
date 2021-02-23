@@ -45,52 +45,57 @@ class NotificationController extends APIController
         $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         if($result['payload'] == 'guarantor'){
           $result['title'] = 'Guarantor Notification';
-          $result['description'] = 'You have been assigned as guarantor by '.$account['username'];
+          $result['message'] = 'You have been assigned as guarantor by '.$account['username'];
         }else if($result['payload'] == 'comaker'){
           $result['title'] = 'Comaker Notification';
-          $result['description'] = 'You have been assigned as comaker by '.$account['username'];
+          $result['message'] = 'You have been assigned as comaker by '.$account['username'];
         }else if($result['payload'] == 'mail'){
           $result['title'] = 'Mail Notification';
-          $result['description'] = 'An email has been sent to your email address';
+          $result['message'] = 'An email has been sent to your email address';
         }else if($result['payload'] == 'invest'){
           $result['title'] = 'Investment Notification';
-          $result['description'] = 'You have received a new investment from '.$account['username'];
+          $result['message'] = 'You have received a new investment from '.$account['username'];
         }else if($result['payload'] == 'request'){
           $result['title'] = 'Request Notification';
-          $result['description'] = 'You have received a peer request from '.$account['username'];
+          $result['message'] = 'You have received a peer request from '.$account['username'];
         }else if($result['payload'] == 'thread'){
           $result['title'] = 'Thread Notification';
-          $result['description'] = 'You have received a message thread from '.$account['username'];
+          $result['message'] = 'You have received a message thread from '.$account['username'];
         }else if($result['payload'] == 'ledger'){
           $result['title'] = 'Ledger Notification';
-          $result['description'] = 'You have an activity with your ledger.';
+          $result['message'] = 'You have an activity with your ledger.';
         }else if($result['payload'] == 'new_delivery'){
           $result['title'] = 'Delivery';
-          $result['description'] = 'New rider found! Click for more details.';
+          $result['message'] = 'New rider found! Click for more details.';
         }else if(explode('/', $result['payload'])[0] == 'form_request' && explode('/', $result['payload'])[1] == 'customer'){
           $result['title'] = 'Customer Health Declaration Form';
-          $result['description'] = 'You need to fill up the health declaration form.';
+          $result['message'] = 'You need to fill up the health declaration form.';
         }else if(explode('/', $result['payload'])[0] == 'form_request' && explode('/', $result['payload'])[1] == 'employee_checkin'){
           $result['title'] = 'Checkin Health Declaration Form';
-          $result['description'] = 'You need to fill up the health declaration form.';
+          $result['message'] = 'You need to fill up the health declaration form.';
         }else if(explode('/', $result['payload'])[0] == 'form_request' && explode('/', $result['payload'])[1] == 'employee_checkout'){
           $result['title'] = 'Checkout Health Declaration Form';
-          $result['description'] = 'You need to fill up the health declaration form.';
+          $result['message'] = 'You need to fill up the health declaration form.';
         }else if(explode('/', $result['payload'])[0] == 'form_submitted' && explode('/', $result['payload'])[1] == 'customer'){
           $result['title'] = 'Health Declaration Form';
-          $result['description'] = 'Customer form submitted.';
+          $result['message'] = 'Customer form submitted.';
         }else if(explode('/', $result['payload'])[0] == 'form_submitted' && explode('/', $result['payload'])[1] == 'employee_checkin'){
           $result['title'] = 'Health Declaration Form';
-          $result['description'] = 'Employee checkin form submitted.';
+          $result['message'] = 'Employee checkin form submitted.';
         }else if(explode('/', $result['payload'])[0] == 'form_submitted' && explode('/', $result['payload'])[1] == 'employee_checkout'){
           $result['title'] = 'Health Declaration Form';
-          $result['description'] = 'Employee checkout form submitted.';
+          $result['message'] = 'Employee checkout form submitted.';
         }else if($result['payload'] == 'installment'){
           $result['title'] = 'Installment Notification';
-          $result['description'] = 'You have an activity on your installment.';
+          $result['message'] = 'You have an activity on your installment.';
         }else if($result['payload'] == 'rental'){
-          $result['title'] = 'Rental Notification';
-          $result['description'] = 'You have an activity on your rental.';
+          $result['tilte'] = 'Rental Notification';
+          $result['message'] = 'You have an activity on your rental.';
+        }else if($result['payload'] == 'Peer Request'){
+          $result['message'] = "There's new processing proposal to your request";
+          $result['title'] = 'New peer request';
+          $result['type'] = 'Notifications';
+          $result['topic'] = 'Notifications';
         }else{
           // $result['title'] = 'Notification';
           // $result['description'] = 'You have an activity with your ledger.';
