@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Storage;
 class ImageController extends APIController
 {
     function __construct(){
+      $this->notRequired = array(
+        'category'
+      );
       if($this->checkAuthenticatedUser() == false){
         return $this->response();
       }
@@ -19,6 +22,20 @@ class ImageController extends APIController
       $data = $request->all();
       $this->model = new Image();
       $this->retrieveDB($data);
+      if(sizeof($this->response['data']) > 0){
+        $i = 0;
+        foreach ($this->response['data'] as $key) {
+          $this->response['data'][$i]['active'] = false;
+          $i++;
+        }
+      }
+      return $this->response();
+    }
+
+    public function retrieveWithCategory(Request $request){
+      $data = $request->all();
+      $result = Image::where('category', '=', $data['category'])->where('deleted_at', '=', null)->get();
+      $this->response['data'] = $result;
       if(sizeof($this->response['data']) > 0){
         $i = 0;
         foreach ($this->response['data'] as $key) {
@@ -43,7 +60,8 @@ class ImageController extends APIController
         $this->model = new Image();
         $insertData = array(
           'account_id'    => $data['account_id'],
-          'url'           => $url
+          'url'           => $url,
+          'category'      => isset($data['category']) ? $data['category'] : null
         );
         $this->insertDB($insertData);
         $this->response['data'] = $url;
@@ -54,6 +72,42 @@ class ImageController extends APIController
         'error' => null,
         'timestamps' => Carbon::now()
       ));
+    }
+
+    public function uploadFile(Request $request){
+      $data = $request->all();
+      if(isset($data['file_url'])){
+        $date = Carbon::now()->toDateString();
+        $time = str_replace(':', '_',Carbon::now()->toTimeString());
+        $ext = $request->file('file')->extension();
+        // $fileUrl = str_replace(' ', '_', $data['file_url']);
+        // $fileUrl = str_replace('%20', '_', $fileUrl);
+        $filename = $data['account_id'].'_'.$date.'_'.$time.'_'.$data['file_url'];
+        $result = $request->file('file')->storeAs('files', $filename);
+        $url = '/storage/file/'.$filename;
+        $this->model = new Image();
+        $insertData = array(
+          'account_id'    => $data['account_id'],
+          'url'           => $url,
+          'category'      => $data['category']
+        );
+        $this->insertDB($insertData);
+        $this->response['data'] = $url;
+        return $this->response();
+      }
+      return response()->json(array(
+        'data'  => null,
+        'error' => null,
+        'timestamps' => Carbon::now()
+      ));
+    }
+
+    public function retrieveFile(Request $request){
+      $data = $request->all();
+      $result = Image::where('account_id', '=', $data['account_id'])->get();
+
+      $this->response['data'] = $result;
+      return $this->response();
     }
 
     public function uploadUnLink(Request $request){
