@@ -56,7 +56,7 @@ class NotificationController extends APIController
             'route'   => $result['route'],
             'date'    => $result['created_at_human'],
             'id'      => $result['id'],
-            'from'    => $result['from'],
+            // 'from'    => $result['from'],
             'to'      => $result['to']
           );
         }else if($result['payload'] == 'thread'){
@@ -70,7 +70,7 @@ class NotificationController extends APIController
             'route'   => $result['route'],
             'date'    => $result['created_at_human'],
             'id'      => $result['id'],
-            'from'    => $result['from'],
+            // 'from'    => $result['from'],
             'to'      => $result['to']
           );
         }else{
