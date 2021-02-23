@@ -59,11 +59,26 @@ class NotificationController extends APIController
             'from'    => $result['from'],
             'to'      => $result['to']
           );
+        }else if($result['payload'] == 'thread'){
+          $response = array(
+            'message' => "Your proposal was accepted",
+            'title'   => "New Thread Message",
+            'type'    => 'Notifications',
+            'topic'   => 'Notifications',
+            'payload'    => $result['payload'],
+            'payload_value' => $result['payload_value'],
+            'route'   => $result['route'],
+            'date'    => $result['created_at_human'],
+            'id'      => $result['id'],
+            'from'    => $result['from'],
+            'to'      => $result['to']
+          );
         }else{
           // $result['title'] = 'Notification';
           // $result['description'] = 'You have an activity with your ledger.';
         }
         if($notify == true && $response != null){
+          echo json_encode($response);
           Notifications::dispatch('notifications', $response);
         }
         return $result;
