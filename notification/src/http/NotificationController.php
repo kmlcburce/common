@@ -78,7 +78,6 @@ class NotificationController extends APIController
           // $result['description'] = 'You have an activity with your ledger.';
         }
         if($notify == true && $response != null){
-          echo json_encode($response);
           Notifications::dispatch('notifications', $response);
         }
         return $result;
