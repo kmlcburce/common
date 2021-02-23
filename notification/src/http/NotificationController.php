@@ -54,7 +54,10 @@ class NotificationController extends APIController
             'payload'    => $result['payload'],
             'payload_value' => $result['payload_value'],
             'route'   => $result['route'],
-            'date'    => $result['created_at_human']
+            'date'    => $result['created_at_human'],
+            'id'      => $result['id'],
+            'from'    => $result['from'],
+            'to'      => $result['to']
           );
         }else{
           // $result['title'] = 'Notification';
