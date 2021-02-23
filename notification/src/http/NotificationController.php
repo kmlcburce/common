@@ -47,7 +47,7 @@ class NotificationController extends APIController
 
         if($result['payload'] == 'Peer Request'){
           $response = array(
-            'message' => "There's new processing proposal to your request",
+            'message' => "There is new processing proposal to your request",
             'title'   => "New peer request",
             'type'    => 'Notifications',
             'topic'   => 'Notifications',
