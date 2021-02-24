@@ -53,7 +53,7 @@ class NotificationController extends APIController
             'title'   => "New peer request",
             'type'    => 'Notifications',
             'topic'   => 'Notifications',
-            // 'payload'    => $result['payload'],
+            'payload'    => $result['payload'],
             'payload_value' => $result['payload_value'],
             'route'   => $result['route'],
             'date'    => $result['created_at_human'],
@@ -67,7 +67,7 @@ class NotificationController extends APIController
             'title'   => "New Thread Message",
             'type'    => 'notifications',
             'topic'   => 'notifications',
-            // 'payload'    => $result['payload'],
+            'payload'    => $result['payload'],
             'payload_value' => $result['payload_value'],
             'route'   => $result['route'],
             'date'    => $result['created_at_human'],
@@ -79,10 +79,13 @@ class NotificationController extends APIController
           // $result['title'] = 'Notification';
           // $result['description'] = 'You have an activity with your ledger.';
         }
+        if($notify == false){
+          $response['from'] = $result['from'];
+        }
         if($notify == true && $response != null){
           Notifications::dispatch('notifications', $response);
         }
-        return $result;
+        return $response;
     }
 
     public function update(Request $request){
