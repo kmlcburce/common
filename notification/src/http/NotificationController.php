@@ -18,9 +18,11 @@ class NotificationController extends APIController
 
     public function retrieve(Request $request){
       $data = $request->all();
-      $result = Notification::where('to', '=', $data['account_id'])->orderBy('created_at', 'desc')->get();
+      $this->model = new Notification();
+      $this->retrieveDB($data);
       $size = 0;
       $flag = false;
+      $result = $this->response['data'];
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
