@@ -110,6 +110,11 @@ class ImageController extends APIController
       return $this->response();
     }
 
+    public function retrieveByAccountId($accountId){
+      $result = Image::where('account_id', '=', $accountId)->get(['id', 'url']);
+      return $result;
+    }
+
     public function uploadUnLink(Request $request){
       $data = $request->all();
       if(isset($data['file_url'])){
