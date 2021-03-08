@@ -41,6 +41,27 @@ class NotificationController extends APIController
       ));
     }
 
+    public function retrieveByRequest($id){
+      $this->response['data'] = Notification::where('id', '=', $id)->get();
+      $size = 0;
+      $flag = false;
+      $result = $this->response['data'];
+      if(sizeof($result) > 0){
+        $i = 0;
+        foreach ($result as $key) {
+          if($flag == false && $result[$i]['updated_at'] == null){
+            $size++;
+          }else if($flag == false && $result[$i]['updated_at'] != null){
+            $flag = true;
+          }
+          $result[$i] = $this->manageResult($result[$i], false);
+          $i++;
+        }
+      }
+      return $result;
+    }
+    
+
     public function manageResult($result, $notify = false){
         $this->localization();
         // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
