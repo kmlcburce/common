@@ -58,7 +58,7 @@ class NotificationController extends APIController
           $i++;
         }
       }
-      return $result;
+      return array($result);
     }
     
 
