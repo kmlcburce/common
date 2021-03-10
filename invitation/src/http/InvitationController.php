@@ -78,7 +78,7 @@ class InvitationController extends APIController
 	public function checkIfExistEmails($fromAccountId, $toEmail){
 		$account = Account::where('email', '=', $toEmail)->get();
 		if(sizeof($account) > 0){
-			return 'Email address already exist';
+			return 'Email address already exists';
 		}else{
 			$invites = Invitation::where('address', '=', $toEmail)->where('account_id', '=', $fromAccountId)->get();
 			return (sizeof($invites) > 0) ? 'Email Address was already invited.' : false;
