@@ -97,8 +97,20 @@ class NotificationController extends APIController
             'to'      => $result['to']
           );
         }else{
-          $result['title'] = $result['payload'];
-          $result['description'] = $result['payload_value'];
+          $response = array(
+            'message' => $result['payload_value'],
+            'title'   => $result['payload'],
+            'description' => $result['payload_value'],
+            'type'    => 'notifications',
+            'topic'   => 'notifications',
+            'payload'    => $result['payload'],
+            'payload_value' => $result['payload_value'],
+            'route'   => $result['route'],
+            'date'    => $result['created_at_human'],
+            'id'      => $result['id'],
+            // 'from'    => $result['from'],
+            'to'      => $result['to']
+          );
         }
         if($notify == false){
           $response['from'] = $result['from'];
