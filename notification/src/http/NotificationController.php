@@ -41,6 +41,31 @@ class NotificationController extends APIController
       ));
     }
 
+    public function retrieveNew(Request $request){
+      $data = $request->all();
+      $this->model = new Notification();
+      $this->retrieveDB($data);
+      $size = 0;
+      $flag = false;
+      $result = $this->response['data'];
+      if(sizeof($result) > 0){
+        $i = 0;
+        foreach ($result as $key) {
+          if($flag == false && $result[$i]['updated_at'] == null){
+            $size++;
+          }else if($flag == false && $result[$i]['updated_at'] != null){
+            $flag = true;
+          }
+          $result[$i] = $this->manageResultNew($result[$i], false);
+          $i++;
+        }
+      }
+      return response()->json(array(
+        'data' => sizeof($result) > 0 ? $result : null,
+        'size' => $size
+      ));
+    }
+
     public function retrieveByRequest($id){
       $this->response['data'] = Notification::where('id', '=', $id)->get();
       $size = 0;
@@ -108,6 +133,54 @@ class NotificationController extends APIController
         }
         return $response;
     }
+
+    public function manageResultNew($result, $notify = false){
+      $this->localization();
+      // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
+      $response = null;
+      $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
+
+      if($result['payload'] == 'Peer Request'){
+        $response = array(
+          'message' => "There is new processing proposal to your request",
+          'title'   => "New peer request",
+          'type'    => 'Notifications',
+          'topic'   => 'Notifications',
+          'payload'    => $result['payload'],
+          'payload_value' => $result['payload_value'],
+          'route'   => $result['route'],
+          'date'    => $result['created_at_human'],
+          'id'      => $result['id'],
+          // 'from'    => $result['from'],
+          'request' => app('App\Http\Controllers\RequestMoneyController')->retrieveByPayloadValue($result['payload_value']),
+          'to'      => $result['to']
+        );
+      }else if($result['payload'] == 'thread'){
+        $response = array(
+          'message' => "Your proposal was accepted",
+          'title'   => "New Thread Message",
+          'type'    => 'notifications',
+          'topic'   => 'notifications',
+          'payload'    => $result['payload'],
+          'payload_value' => $result['payload_value'],
+          'route'   => $result['route'],
+          'date'    => $result['created_at_human'],
+          'id'      => $result['id'],
+          // 'from'    => $result['from'],
+          'to'      => $result['to']
+        );
+      }else{
+        // $result['title'] = 'Notification';
+        // $result['description'] = 'You have an activity with your ledger.';
+      }
+      if($notify == false){
+        $response['from'] = $result['from'];
+      }
+      if($notify == true && $response != null){
+        Notifications::dispatch('notifications', $response);
+      }
+      return $response;
+  }
 
     public function update(Request $request){
       $data = $request->all();

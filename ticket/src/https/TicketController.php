@@ -30,7 +30,7 @@ class TicketController extends APIController
     public function create(Request $request){
       $data = $request->all();
       $data['code'] = $this->generateCode();
-      $data['status'] = 'OPEN';
+      $data['status'] = 'PENDING';
       $this->model = new Ticket();
       $this->insertDB($data);
       return $this->response();
