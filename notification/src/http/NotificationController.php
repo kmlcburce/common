@@ -100,7 +100,7 @@ class NotificationController extends APIController
           $response = array(
             'message' => $result['payload_value'],
             'title'   => $result['payload'],
-            'description' => $result['payload_value'],
+            'description' => 'View Activity',
             'type'    => 'notifications',
             'topic'   => 'notifications',
             'payload'    => $result['payload'],
