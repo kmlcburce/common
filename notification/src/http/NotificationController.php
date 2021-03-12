@@ -98,9 +98,8 @@ class NotificationController extends APIController
           );
         }else{
           $response = array(
-            'message' => $result['payload_value'],
+            'message' => 'View Activity',
             'title'   => $result['payload'],
-            'description' => 'View Activity',
             'type'    => 'notifications',
             'topic'   => 'notifications',
             'payload'    => $result['payload'],
