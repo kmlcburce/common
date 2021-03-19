@@ -3,7 +3,7 @@
 namespace Increment\Common\MyCircle\Http;
 
 use App\Http\Controllers\APIController;
-use Increment\Common\Invitation\Models\MyCircle;
+use Increment\Common\MyCircle\Models\MyCircle;
 use Increment\Account\Models\Account;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EmailController;
