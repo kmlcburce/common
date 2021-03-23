@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Increment\Common\MyCircle\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
