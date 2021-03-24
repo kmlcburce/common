@@ -3,7 +3,7 @@
 namespace Increment\Common\MyCircle\Http;
 
 use App\Http\Controllers\APIController;
-use Increment\Common\Invitation\Models\MyCircle;
+use Increment\Common\MyCircle\Models\MyCircle;
 use Increment\Account\Models\Account;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EmailController;
@@ -90,7 +90,10 @@ class MyCircleController extends APIController
 
    public function retrieve(Request $request){
       $data = $request->all();
-      $this->retrieveDB($data);
+      $this->response['data'] = MyCircle::where(function($query) use ($con){
+         $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
+         ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
+      })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->offset($data['offset'])->limit($data['limit'])->get();
       $i = 0;
       $result = $this->response['data'];
       foreach ($result as $key) {

@@ -122,8 +122,19 @@ class NotificationController extends APIController
             'to'      => $result['to']
           );
         }else{
-          // $result['title'] = 'Notification';
-          // $result['description'] = 'You have an activity with your ledger.';
+          $response = array(
+            'message' => 'View Activity',
+            'title'   => $result['payload'],
+            'type'    => 'notifications',
+            'topic'   => 'notifications',
+            'payload'    => $result['payload'],
+            'payload_value' => $result['payload_value'],
+            'route'   => $result['route'],
+            'date'    => $result['created_at_human'],
+            'id'      => $result['id'],
+            // 'from'    => $result['from'],
+            'to'      => $result['to']
+          );
         }
         if($notify == false){
           $response['from'] = $result['from'];
