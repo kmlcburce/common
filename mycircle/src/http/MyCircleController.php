@@ -3,7 +3,7 @@
 namespace Increment\Common\MyCircle\Http;
 
 use App\Http\Controllers\APIController;
-use Increment\Common\Invitation\Models\MyCircle;
+use Increment\Common\MyCirle\Models\MyCircle;
 use Increment\Account\Models\Account;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EmailController;
@@ -105,6 +105,21 @@ class MyCircleController extends APIController
         $result[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('profile', $accountId);
         $i++;
         $this->response['data'] = $result;
+      }
+      return $this->response;
+   }
+
+   public function retrieveOtherAccount(Request $request){
+      $data = $request->all();
+      $this->response['data'] = Account::get();
+      $i = 0;
+      $result = $this->response['data'];
+      foreach ($result as $key) {
+         $temp = MyCircle::where(function($query)use($data){
+            $query->where( 'account', '!=', $result[$i]['id'])->where('account_id', '!=', $data['account_id']);
+         })->orWhere(function($query)use($data){
+            $query->where( 'account_id', '!=', $result[$i]['id'])->where('account', '!=', $data['account_id']);
+         })->get();
       }
       return $this->response;
    }
