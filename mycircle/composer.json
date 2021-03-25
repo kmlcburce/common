@@ -1,0 +1,26 @@
+{
+    "name": "increment/mycircle",
+    "description": "My circle connections",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kennCK",
+            "email": "kennettecanales@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Increment\\Common\\MyCircle\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Increment\\Common\\MyCircle\\MyCircleServiceProvider"
+            ]
+        }
+    }
+}

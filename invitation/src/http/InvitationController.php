@@ -40,12 +40,47 @@ class InvitationController extends APIController
 		}
 	}
 
+	public function createWithValidation(Request $request){
+		$data = $request->all();
+		$exist = $this->checkIfExistEmails($data['account_id'], $data['to_email']);
+
+		if($exist == false){
+			$user = $this->retrieveAccountDetails($data['account_id']);
+   		$insertData = array(
+   			'code' => $this->generateCode(),
+   			'account_id'	=> $data['account_id'],
+   			'address'	=> $data['to_email'],
+   			'status'	=> 'sent'
+   		);
+   		$this->model = new Invitation();
+   		$this->insertDB($insertData);
+   		if($this->response['data'] > 0 && $user != null){
+   			Mail::to($data['to_email'])->send(new Referral($user, $data['content'], $data['to_email'], $this->getDetails($this->response['data']), $this->response['timezone']));
+   		}
+   		return $this->response();
+		}else{
+			$this->response['data'] = null;
+			$this->response['error'] = $exist;
+			return $this->response();
+		}
+	}
+
 	public function checkIfExist($email){
 		$account = Account::where('email', '=', $email)->get();
 		if(sizeof($account) > 0){
 			return 'Email address already exist';
 		}else{
 			$invites = Invitation::where('address', '=', $email)->get();
+			return (sizeof($invites) > 0) ? 'Email Address was already invited.' : false;
+		}
+	}
+
+	public function checkIfExistEmails($fromAccountId, $toEmail){
+		$account = Account::where('email', '=', $toEmail)->get();
+		if(sizeof($account) > 0){
+			return 'Email address already exists';
+		}else{
+			$invites = Invitation::where('address', '=', $toEmail)->where('account_id', '=', $fromAccountId)->get();
 			return (sizeof($invites) > 0) ? 'Email Address was already invited.' : false;
 		}
 	}
