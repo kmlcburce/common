@@ -5,6 +5,7 @@ namespace Increment\Common\Ticket\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Common\Ticket\Models\Ticket;
+use Carbon\Carbon;
 
 class TicketController extends APIController
 {
@@ -25,6 +26,27 @@ class TicketController extends APIController
       }else{
         return $code;
       }
+    }
+
+    public function retrieve(Request $request){
+      $data = $request->all();
+      $whereArray = array(
+        array($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value']),
+      );
+      if(isset($data[1]['column'])){
+        array_push($whereArray, array($data['condition'][1]['column'], $data['condition'][1]['clause'], $data['condition'][1]['value']));
+      };
+      $result = Ticket::where($whereArray)->get();
+      if(sizeof($result) > 0){
+        $i = 0;
+        foreach ($result as $key) {
+          $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
+        }
+      }
+
+      $this->response['data'] = $result;
+
+      return $this->response();
     }
 
     public function create(Request $request){
