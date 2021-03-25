@@ -3,7 +3,7 @@
 namespace Increment\Common\MyCircle\Http;
 
 use App\Http\Controllers\APIController;
-use Increment\Common\MyCirle\Models\MyCircle;
+use Increment\Common\MyCircle\Models\MyCircle;
 use Increment\Account\Models\Account;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EmailController;
@@ -90,10 +90,18 @@ class MyCircleController extends APIController
 
    public function retrieve(Request $request){
       $data = $request->all();
-      $this->response['data'] = MyCircle::where(function($query) use ($con){
-         $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-         ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
-      })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->offset($data['offset'])->limit($data['limit'])->get();
+      $con = $data['condition'];
+      if(isset($data['limit'])){
+         $this->response['data'] = MyCircle::where(function($query) use ($con){
+            $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
+            ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
+         })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->offset($data['offset'])->limit($data['limit'])->get();
+      }else{
+         $this->response['data'] = MyCircle::where(function($query) use ($con){
+            $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
+            ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
+         })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->get();
+      }
       $i = 0;
       $result = $this->response['data'];
       foreach ($result as $key) {
@@ -111,18 +119,29 @@ class MyCircleController extends APIController
 
    public function retrieveOtherAccount(Request $request){
       $data = $request->all();
-      $this->response['data'] = Account::get();
       $i = 0;
-      $result = $this->response['data'];
-      foreach ($result as $key) {
-         $temp = MyCircle::where(function($query)use($data){
-            $query->where( 'account', '!=', $result[$i]['id'])->where('account_id', '!=', $data['account_id']);
-         })->orWhere(function($query)use($data){
-            $query->where( 'account_id', '!=', $result[$i]['id'])->where('account', '!=', $data['account_id']);
-         })->get();
+      $temp = null;
+      $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->get();
+      if(sizeof($mycircle) > 0){
+         foreach ($mycircle as $keyAccount) {
+            $temp = $this->retrieveAccount($mycircle[$i]['account'], $mycircle[$i]['account_id']);
+            $i++;
+         }
+      }else{
+         $temp = Account::where('id', '!=', $data['account_id'])->get();
       }
-      return $this->response;
+      $this->response['data'] = $temp;
+      return $this->response();
    }
+
+   public function retrieveAccount($account, $accountId){
+      // dd($account, $accountId);
+      $result = Account::where('id', '!=', $account)->where('id', '!=', $accountId)->get();
+
+      return sizeof($result) > 0 ? $result : [];
+   }
+
+
 
    public function retrieveName($accountId){
       $result = app('Increment\Account\Http\AccountController')->retrieveById($accountId);
