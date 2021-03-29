@@ -120,17 +120,28 @@ class MyCircleController extends APIController
    public function retrieveOtherAccount(Request $request){
       $data = $request->all();
       $i = 0;
-      $temp = null;
+      $result = null;
       $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->get();
       if(sizeof($mycircle) > 0){
          foreach ($mycircle as $keyAccount) {
-            $temp = $this->retrieveAccount($mycircle[$i]['account'], $mycircle[$i]['account_id']);
+            $result = $this->retrieveAccount($mycircle[$i]['account'], $mycircle[$i]['account_id']);
             $i++;
          }
       }else{
-         $temp = Account::where('id', '!=', $data['account_id'])->get();
+         $result = Account::where('id', '!=', $data['account_id'])->get();
       }
-      $this->response['data'] = $temp;
+      if(sizeof($result) > 0){
+         // dd($result);
+         $j = 0;
+         foreach ($result as $key) {
+            $result[$j]['status'] = $key['status'];
+            $result[$j]['account_id'] =  $result[$j]['id'];
+            $result[$j]['account'] = $this->retrieveFullAccountDetails($result[$j]['id']);
+            $result[$j]['rating'] = app($this->ratingClass)->getRatingByPayload('profile',  $result[$j]['id']);
+            $j++;
+         }
+         $this->response['data'] = $result;
+      }
       return $this->response();
    }
 
