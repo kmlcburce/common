@@ -55,7 +55,7 @@ class MyCircleController extends APIController
 		if(sizeof($account) == 0){
 			return 'Email does not exist';
 		}else{
-         $invites = MyCircle::where('account', '=', $account[0]->id)->where('account_id', '=', $owner)->get();
+         $invites = MyCircle::where('account', '=', $account[0]->id)->where('account_id', '=', $owner)->where('status', '!=', 'declined')->get();
 			return (sizeof($invites) > 0) ? 'Email Address was already invited.' : false;
 		}
 	}
