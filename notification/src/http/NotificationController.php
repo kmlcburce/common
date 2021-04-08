@@ -3,6 +3,7 @@
 namespace Increment\Common\Notification\Http;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Increment\Imarket\Location\Models\Location;
 use Increment\Account\Models\Account;
 use Increment\Common\Notification\Models\Notification;
 use App\Http\Controllers\APIController;
@@ -14,6 +15,29 @@ class NotificationController extends APIController
         return $this->response();
       }
       $this->model = new Notification();
+    }
+
+    public function retrieveSynqtNotification(Request $request) {
+
+      $synqtClass = 'App\Http\Controllers\SynqtController';
+      $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
+
+      $data = $request->all();
+      $this->model = new Notification();
+      $this->retrieveDB($data);
+      $result = $this->response['data'];
+      if(sizeof($result) > 0){
+        $i = 0;
+        foreach ($result as $key) {
+          $result[$i]['reservee'] = $this->retrieveNameOnly($result[$i]['from']);
+          $result[$i]['synqt'] = app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
+          $result[$i]['location'] = Location::where('id', '=', app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value'])[0]->location_id)->get();
+          $result[$i]['merchant'] = app($merchantClass)->getByParams('id', $result[$i]['location'][0]->merchant_id);
+          $i++;
+        }
+        $this->response['data'] = $result;
+      }
+      return $this->response();
     }
 
     public function retrieve(Request $request){
