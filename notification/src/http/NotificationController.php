@@ -178,6 +178,8 @@ class NotificationController extends APIController
           'date'    => $result['created_at_human'],
           'id'      => $result['id'],
           // 'from'    => $result['from'],
+          'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('id' ,$result['payload_value'], ['currency']),
+          'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('id' ,$result['payload_value'], ['amount']),
           'to'      => $result['to']
         );
       }else{
