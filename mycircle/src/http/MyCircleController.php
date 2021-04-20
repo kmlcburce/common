@@ -120,18 +120,19 @@ class MyCircleController extends APIController
    public function retrieveOtherAccount(Request $request){
       $data = $request->all();
       $i = 0;
-      $result = null;
-      $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->get();
-      if(sizeof($mycircle) > 0){
-         foreach ($mycircle as $keyAccount) {
-            $result = $this->retrieveAccount($mycircle[$i]['account'], $mycircle[$i]['account_id']);
-            $i++;
+      $result = Account::where('id', '!=', $data['account_id'])->get();
+      foreach ($result as $keyAcc) {
+         $result[$i]['is_added'] = false;
+         $temp = MyCircle::where('account', '=', $keyAcc['id'])->orWhere('account_id', '=', $keyAcc['id'])->get();
+         if(sizeof($temp) > 0){
+            $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->get();
+            if(sizeof($mycircle) > 0 ){
+               $result[$i]['is_added'] = true;
+            }
          }
-      }else{
-         $result = Account::where('id', '!=', $data['account_id'])->get();
+         $i++;
       }
       if(sizeof($result) > 0){
-         // dd($result);
          $j = 0;
          foreach ($result as $key) {
             $result[$j]['status'] = $key['status'];
