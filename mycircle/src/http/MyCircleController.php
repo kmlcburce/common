@@ -94,12 +94,12 @@ class MyCircleController extends APIController
       if(isset($data['limit'])){
          $this->response['data'] = MyCircle::where(function($query) use ($con){
             $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-            ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
+            ->orWhere($con[1]['column'], $con[0]['clause'], $con[1]['value']);
          })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->offset($data['offset'])->limit($data['limit'])->get();
       }else{
          $this->response['data'] = MyCircle::where(function($query) use ($con){
             $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-            ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
+            ->orWhere($con[1]['column'], $con[0]['clause'], $con[1]['value']);
          })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->get();
       }
       $i = 0;
