@@ -55,7 +55,7 @@ class MyCircleController extends APIController
 		if(sizeof($account) == 0){
 			return 'Email does not exist';
 		}else{
-         $invites = MyCircle::where('account', '=', $account[0]->id)->where('account_id', '=', $owner)->get();
+         $invites = MyCircle::where('account', '=', $account[0]->id)->where('account_id', '=', $owner)->where('status', '!=', 'declined')->get();
 			return (sizeof($invites) > 0) ? 'Email Address was already invited.' : false;
 		}
 	}
@@ -94,12 +94,12 @@ class MyCircleController extends APIController
       if(isset($data['limit'])){
          $this->response['data'] = MyCircle::where(function($query) use ($con){
             $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-            ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
+            ->orWhere($con[1]['column'], $con[0]['clause'], $con[1]['value']);
          })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->offset($data['offset'])->limit($data['limit'])->get();
       }else{
          $this->response['data'] = MyCircle::where(function($query) use ($con){
             $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-            ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
+            ->orWhere($con[1]['column'], $con[0]['clause'], $con[1]['value']);
          })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->get();
       }
       $i = 0;
@@ -120,17 +120,29 @@ class MyCircleController extends APIController
    public function retrieveOtherAccount(Request $request){
       $data = $request->all();
       $i = 0;
-      $temp = null;
-      $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->get();
-      if(sizeof($mycircle) > 0){
-         foreach ($mycircle as $keyAccount) {
-            $temp = $this->retrieveAccount($mycircle[$i]['account'], $mycircle[$i]['account_id']);
-            $i++;
+      $result = Account::where('id', '!=', $data['account_id'])->get();
+      foreach ($result as $keyAcc) {
+         $result[$i]['is_added'] = false;
+         $temp = MyCircle::where('account', '=', $keyAcc['id'])->orWhere('account_id', '=', $keyAcc['id'])->get();
+         if(sizeof($temp) > 0){
+            $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->get();
+            if(sizeof($mycircle) > 0 ){
+               $result[$i]['is_added'] = true;
+            }
          }
-      }else{
-         $temp = Account::where('id', '!=', $data['account_id'])->get();
+         $i++;
       }
-      $this->response['data'] = $temp;
+      if(sizeof($result) > 0){
+         $j = 0;
+         foreach ($result as $key) {
+            $result[$j]['status'] = $key['status'];
+            $result[$j]['account_id'] =  $result[$j]['id'];
+            $result[$j]['account'] = $this->retrieveFullAccountDetails($result[$j]['id']);
+            $result[$j]['rating'] = app($this->ratingClass)->getRatingByPayload('profile',  $result[$j]['id']);
+            $j++;
+         }
+         $this->response['data'] = $result;
+      }
       return $this->response();
    }
 
