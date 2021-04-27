@@ -10,12 +10,11 @@ class LocationScopeController extends APIController
 {
 	function __construct(){
 		$this->model = new LocationScope();
-      $this->notRequired = array('route', 'city', 'region', 'country');
+      $this->notRequired = array('route', 'city', 'region');
 	}
 
   public function retrieve(Request $request){
     $data = $request->all();
-    dd($data);
     $this->retrieveDB($data);
     $this->response['size'] = LocationScope::count();
     return $this->response();
