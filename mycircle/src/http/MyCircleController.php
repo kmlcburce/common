@@ -120,12 +120,12 @@ class MyCircleController extends APIController
    public function retrieveOtherAccount(Request $request){
       $data = $request->all();
       $i = 0;
-      $result = Account::where('id', '!=', $data['account_id'])->get();
+      $result = Account::where('id', '!=', $data['account_id'])->where('deleted_at', '=', null)->limit($data['limit'])->offset($data['offset'])->get();
       foreach ($result as $keyAcc) {
          $result[$i]['is_added'] = false;
-         $temp = MyCircle::where('account', '=', $keyAcc['id'])->orWhere('account_id', '=', $keyAcc['id'])->get();
+         $temp = MyCircle::where('account', '=', $keyAcc['id'])->orWhere('account_id', '=', $keyAcc['id'])->where('deleted_at', '=', null)->get();
          if(sizeof($temp) > 0){
-            $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->get();
+            $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->where('deleted_at', '=', null)->get();
             if(sizeof($mycircle) > 0 ){
                $result[$i]['is_added'] = true;
             }
