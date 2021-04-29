@@ -126,8 +126,16 @@ class MyCircleController extends APIController
          $temp = MyCircle::where('account', '=', $keyAcc['id'])->orWhere('account_id', '=', $keyAcc['id'])->where('deleted_at', '=', null)->get();
          if(sizeof($temp) > 0){
             $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->where('deleted_at', '=', null)->get();
-            if(sizeof($mycircle) > 0 ){
-               $result[$i]['is_added'] = true;
+            $j=0;
+            foreach ($mycircle as $value) {
+               if($value['account'] == $data['account_id'] || $value['account_id'] == $data['account_id']){
+                  if($result[$i]['id'] == $value['account'] || $result[$i]['id'] == $value['account_id']){
+                     $result[$i]['is_added'] = true;
+                  }
+               }else{
+                  $result[$i]['is_added'] = false;
+               }
+               $j++;
             }
          }
          $i++;
@@ -175,5 +183,4 @@ class MyCircleController extends APIController
         return null;
       }
     }
-
 }
