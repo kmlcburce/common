@@ -43,7 +43,8 @@ class TicketController extends APIController
           $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
         }
       }
-
+      
+      $this->response['size'] = Ticket::where('deleted_at', '=', null)->count();
       $this->response['data'] = $result;
 
       return $this->response();

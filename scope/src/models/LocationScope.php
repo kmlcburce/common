@@ -6,5 +6,5 @@ use App\APIModel;
 class LocationScope extends APIModel
 {
   protected $table = 'location_scopes';
-  protected $fillable = ['code', 'scope', 'city', 'region', 'country'];
+  protected $fillable = ['code', 'scope', 'city', 'region', 'country', 'latitude', 'longitude'];
 }

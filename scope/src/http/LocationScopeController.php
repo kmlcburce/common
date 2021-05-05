@@ -16,7 +16,7 @@ class LocationScopeController extends APIController
   public function retrieve(Request $request){
     $data = $request->all();
     $this->retrieveDB($data);
-    $this->response['size'] = LocationScope::count();
+    $this->response['size'] = LocationScope::where('deleted_at', '=', null)->count();
     return $this->response();
   }
 }

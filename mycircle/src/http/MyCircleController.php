@@ -94,12 +94,12 @@ class MyCircleController extends APIController
       if(isset($data['limit'])){
          $this->response['data'] = MyCircle::where(function($query) use ($con){
             $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-            ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
+            ->orWhere($con[1]['column'], $con[0]['clause'], $con[1]['value']);
          })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->offset($data['offset'])->limit($data['limit'])->get();
       }else{
          $this->response['data'] = MyCircle::where(function($query) use ($con){
             $query->where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-            ->orWhere($con[1]['column'], $con[1]['clause'], $con[1]['value']);
+            ->orWhere($con[1]['column'], $con[0]['clause'], $con[1]['value']);
          })->where($con[2]['column'], $con[2]['clause'], $con[2]['value'])->get();
       }
       $i = 0;
@@ -120,14 +120,22 @@ class MyCircleController extends APIController
    public function retrieveOtherAccount(Request $request){
       $data = $request->all();
       $i = 0;
-      $result = Account::where('id', '!=', $data['account_id'])->get();
+      $result = Account::where('id', '!=', $data['account_id'])->where('deleted_at', '=', null)->limit($data['limit'])->offset($data['offset'])->get();
       foreach ($result as $keyAcc) {
          $result[$i]['is_added'] = false;
-         $temp = MyCircle::where('account', '=', $keyAcc['id'])->orWhere('account_id', '=', $keyAcc['id'])->get();
+         $temp = MyCircle::where('account', '=', $keyAcc['id'])->orWhere('account_id', '=', $keyAcc['id'])->where('deleted_at', '=', null)->get();
          if(sizeof($temp) > 0){
-            $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->get();
-            if(sizeof($mycircle) > 0 ){
-               $result[$i]['is_added'] = true;
+            $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->where('deleted_at', '=', null)->get();
+            $j=0;
+            foreach ($mycircle as $value) {
+               if($value['account'] == $data['account_id'] || $value['account_id'] == $data['account_id']){
+                  if($result[$i]['id'] == $value['account'] || $result[$i]['id'] == $value['account_id']){
+                     $result[$i]['is_added'] = true;
+                  }
+               }else{
+                  $result[$i]['is_added'] = false;
+               }
+               $j++;
             }
          }
          $i++;
@@ -175,5 +183,4 @@ class MyCircleController extends APIController
         return null;
       }
     }
-
 }
