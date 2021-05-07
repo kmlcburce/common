@@ -19,4 +19,21 @@ class LocationScopeController extends APIController
     $this->response['size'] = LocationScope::where('deleted_at', '=', null)->count();
     return $this->response();
   }
+
+  public function createScope(Request $request){
+    $data = $request->all();
+    $this->model = new LocationScope();
+    $params = array(
+      'city' => $data['city'],
+      'code' => $data['code'],
+      'country' => $data['country'],
+      'latitude' => $data['latitude'],
+      'longitude' => $data['longitude'],
+      'region' => $data['region'],
+      'route' => $data['route']
+    );
+    $this->insertDB($params);
+    return $this->response();
+}
+
 }
