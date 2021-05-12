@@ -33,6 +33,7 @@ class NotificationController extends APIController
           $result[$i]['synqt'] = app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
           $result[$i]['location'] = Location::where('id', '=', app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value'])[0]->location_id)->get();
           $result[$i]['merchant'] = app($merchantClass)->getByParams('id', $result[$i]['location'][0]->merchant_id);
+          $result[$i]['members'] = app('Increment\Messenger\Http\MessengerGroupController')->getMembersByParams('payload', $result[$i]['payload_value'], ['id', 'title']);
           $i++;
         }
         $this->response['data'] = $result;
@@ -172,6 +173,8 @@ class NotificationController extends APIController
     public function manageResultNew($result, $notify = false){
       $this->localization();
       // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
+      $tempCode =  strrpos($result['route'], '/');
+      $code = substr($result['route'], $tempCode + 1);
       $response = null;
       $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
 
@@ -202,8 +205,8 @@ class NotificationController extends APIController
           'date'    => $result['created_at_human'],
           'id'      => $result['id'],
           // 'from'    => $result['from'],
-          'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('id' ,$result['payload_value'], ['currency']),
-          'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('id' ,$result['payload_value'], ['amount']),
+          'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['currency']),
+          'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['amount']),
           'to'      => $result['to']
         );
       }else{
