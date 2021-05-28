@@ -108,7 +108,7 @@ class RatingController extends APIController
         ->get();
       return sizeof($rating) > 0 ? $rating[0]['value'] : null;
     }
-
+    
     public function getRatingByParams($column, $value){
       $rating = Rating::where($column, '=', $value)->get();
       return sizeof($rating) > 0 ? $rating : [];
