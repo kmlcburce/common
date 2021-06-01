@@ -30,7 +30,7 @@ class TicketController extends APIController
 
     public function retrieve(Request $request){
       $data = $request->all();
-      dd($data);
+      // dd($data);
       $whereArray = array(
         array($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value']),
       );
