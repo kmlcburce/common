@@ -228,7 +228,7 @@ class MyCircleController extends APIController
       $result = MyCircle::where(function ($query) use ($accountId) {
          $query->where('account_id', '=', $accountId)
             ->orWhere('account', '=', $accountId);
-      })->get();
+      })->where('status', '=', 'accepted')->get();
       $i=0;
       $res = array();
       foreach ($result as $key) {
