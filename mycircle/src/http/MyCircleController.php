@@ -114,9 +114,10 @@ class MyCircleController extends APIController
       $result = $this->response['data'];
       foreach ($result as $key) {
          $count=0;
-         $result[$i]['status'] = $key['status'];
          $value = $data['condition'][0]['value'];
-         $accountId = $value == $key['account_id'] ? $key['account'] : $key['account_id'];
+         $result[$i]['status'] = $key['status'];
+         $result[$i]['account_id'] = $key['account_id'];
+         $accountId = $value == $result[$i]['account_id'] ? $key['account'] : $key['account_id'];
          $othersConnection = $this->retrieveOtherConnection($accountId, $data['condition'][0]['value']);
          $a = 0;
          foreach ($othersConnection as $others) {
@@ -129,7 +130,6 @@ class MyCircleController extends APIController
             }
          }
          $result[$i]['account'] = $this->retrieveFullAccountDetails($accountId);
-         $result[$i]['account_id'] = $data['condition'][0]['value'];
          unset($result[$i]['account']['billing']);
          $result[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('profile', $accountId);
          $i++;
