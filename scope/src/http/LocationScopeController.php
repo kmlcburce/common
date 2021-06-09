@@ -16,7 +16,25 @@ class LocationScopeController extends APIController
   public function retrieve(Request $request){
     $data = $request->all();
     $this->retrieveDB($data);
-    $this->response['size'] = LocationScope::where('deleted_at', '=', null)->count();
+    if(isset($data['condition'])){
+      $condition = $data['condition'];
+      if(sizeof($condition) == 1){
+        $con = $condition[0];
+        $this->response['size'] = LocationScope::where('deleted_at', '=', null)->where($con['column'], $con['clause'], $con['value'])->count();
+      }
+      if(sizeof($condition) == 2){
+        $con = $condition[0];
+        $con1 = $condition[1];
+        if($con1['clause'] != 'or'){
+          $this->response['size'] = LocationScope::where('deleted_at', '=', null)->where($con['column'], $con['clause'], $con['value'])->where($con1['column'], $con1['clause'], $con1['value'])->count();
+        }else{
+          $this->response['size'] = LocationScope::where('deleted_at', '=', null)->where($con['column'], $con['clause'], $con['value'])->orWhere($con1['column'], '=', $con1['value'])->count();
+        }
+        
+      }
+    }else{
+      $this->response['size'] = LocationScope::where('deleted_at', '=', null)->count();
+    }
     return $this->response();
   }
 
