@@ -113,21 +113,13 @@ class MyCircleController extends APIController
       $i = 0;
       $result = $this->response['data'];
       foreach ($result as $key) {
-         $count=0;
+         $count = 0;
          $result[$i]['status'] = $key['status'];
          $value = $data['condition'][0]['value'];
          $accountId = $value == $key['account_id'] ? $key['account'] : $key['account_id'];
          $othersConnection = $this->retrieveOtherConnection($accountId, $data['condition'][0]['value']);
          $a = 0;
-         foreach ($othersConnection as $others) {
-            if (($others['account'] == $accountId || $others['account_id'] == $accountId)) {
-               $count++;
-               $result[$i]['similar_connections'] = $count;
-               $a++;
-            } else {
-               $result[$i]['similar_connections'] = 0;
-            }
-         }
+         $result[$i]['similar_connections'] = $othersConnection;
          $result[$i]['account'] = $this->retrieveFullAccountDetails($accountId);
          $result[$i]['account_id'] = $data['condition'][0]['value'];
          unset($result[$i]['account']['billing']);
@@ -225,19 +217,20 @@ class MyCircleController extends APIController
 
    public function retrieveOtherConnection($accountId, $ownerId)
    {
+      $count = 0;
       $result = MyCircle::where(function ($query) use ($accountId) {
          $query->where('account_id', '=', $accountId)
             ->orWhere('account', '=', $accountId);
-      })->get();
-      $i=0;
+      })->where('status', '=', 'accepted')->get();
+      $i = 0;
       $res = array();
       foreach ($result as $key) {
-         if($key['account'] !== $ownerId && $key['account_id'] !== $ownerId){
-            array_push($res, $key);
+         if ($key['account'] !== $ownerId && $key['account_id'] !== $ownerId ) {
+               array_push($res, $key);
+               $count++;
          }
          $i++;
       }
-
-      return $res;
+      return $count;
    }
 }
