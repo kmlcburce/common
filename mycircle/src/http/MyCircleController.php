@@ -232,7 +232,7 @@ class MyCircleController extends APIController
       $i=0;
       $res = array();
       foreach ($result as $key) {
-         if($key['account'] !== $ownerId && $key['account_id'] !== $ownerId){
+         if($key['account'] !== $ownerId && $key['account_id'] !== $ownerId && $key['account']['id'] !== $ownerId){
             array_push($res, $key);
          }
          $i++;
