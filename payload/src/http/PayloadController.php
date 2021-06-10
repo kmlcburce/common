@@ -110,4 +110,9 @@ class PayloadController extends APIController
       $this->response['data'] = $value;
       return $this->response();
     }
+
+    public function getByParams($arrayCondition){
+      $result = Payload::where($arrayCondition)->get();
+      return sizeof($result) > 0 ? $result[0] : null;
+    }
 }

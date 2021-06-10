@@ -113,15 +113,15 @@ class MyCircleController extends APIController
       $i = 0;
       $result = $this->response['data'];
       foreach ($result as $key) {
-         $count = 0;
-         $result[$i]['status'] = $key['status'];
+         $count=0;
          $value = $data['condition'][0]['value'];
-         $accountId = $value == $key['account_id'] ? $key['account'] : $key['account_id'];
+         $result[$i]['status'] = $key['status'];
+         $result[$i]['account_id'] = $key['account_id'];
+         $accountId = $value == $result[$i]['account_id'] ? $key['account'] : $key['account_id'];
          $othersConnection = $this->retrieveOtherConnection($accountId, $data['condition'][0]['value']);
          $a = 0;
          $result[$i]['similar_connections'] = $othersConnection;
          $result[$i]['account'] = $this->retrieveFullAccountDetails($accountId);
-         $result[$i]['account_id'] = $data['condition'][0]['value'];
          unset($result[$i]['account']['billing']);
          $result[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('profile', $accountId);
          $i++;
@@ -148,16 +148,7 @@ class MyCircleController extends APIController
                      $othersId = $data['account_id'] === $value['account'] ? $value['account_id'] : $value['account'];
                      $othersConnection = $this->retrieveOtherConnection($othersId, $data['account_id']);
                      $a = 0;
-                     $result[$i]['similar_connections'] = 0;
-                     foreach ($othersConnection as $others) {
-                        if (($others['account'] == $value['account'] || $others['account_id'] == $value['account_id']) || ($others['account'] == $value['account_id'] || $others['account_id'] == $value['account'])) {
-                           $count++;
-                           $result[$i]['similar_connections'] = $count;
-                           $a++;
-                        } else {
-                           $result[$i]['similar_connections'] = 0;
-                        }
-                     }
+                     $result[$i]['similar_connections'] = $othersConnection;
                      $result[$i]['is_added'] = true;
                   }
                } else {
@@ -218,19 +209,47 @@ class MyCircleController extends APIController
    public function retrieveOtherConnection($accountId, $ownerId)
    {
       $count = 0;
-      $result = MyCircle::where(function ($query) use ($accountId) {
-         $query->where('account_id', '=', $accountId)
-            ->orWhere('account', '=', $accountId);
-      })->where('status', '=', 'accepted')->get();
-      $i = 0;
-      $res = array();
-      foreach ($result as $key) {
-         if ($key['account'] !== $ownerId && $key['account_id'] !== $ownerId ) {
-               array_push($res, $key);
+      $temp1 = MyCircle::where('account_id', '=', $accountId)->get();
+      $temp2 = MyCircle::where('account_id', '=', $ownerId)->get();
+      $temp3 = MyCircle::where('account', '=', $accountId)->get();
+      $temp4 = MyCircle::where('account', '=', $ownerId)->get();
+      $a=0;
+      foreach ($temp3 as $key3) {
+         $b=0;
+         foreach ($temp4 as $key4) {
+            if(($key3['account_id'] == $key4['account_id']) && ($key3['account'] !== $ownerId && $key4['account'] !== $accountId)){
                $count++;
+            }
+            $b++;
          }
-         $i++;
+         $a++;
       }
+
+      $c=0;
+      foreach ($temp1 as $key1) {
+         $d=0;
+         foreach ($temp2 as $key2) {
+            if(($key1['account'] == $key2['account']) && ($key1['account_id'] !== $ownerId && $key2['account_id'] !== $accountId)){
+               $count++;
+            }
+            $d++;
+         }
+         $c++;
+      }
+
+      // $result = MyCircle::where(function ($query) use ($accountId) {
+      //    $query->where('account_id', '=', $accountId)
+      //       ->orWhere('account', '=', $accountId);
+      // })->where('status', '=', 'accepted')->get();
+      // $i=0;
+      // $res = array();
+      // foreach ($result as $key) {
+      //    if ($key['account'] !== $ownerId && $key['account_id'] !== $ownerId) {
+      //          array_push($res, $key);
+      //          $count++;
+      //    }
+      //    $i++;
+      // }
       return $count;
    }
 }

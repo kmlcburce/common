@@ -30,6 +30,7 @@ class TicketController extends APIController
 
     public function retrieve(Request $request){
       $data = $request->all();
+      // dd($data);
       $whereArray = array(
         array($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value']),
       );
@@ -41,6 +42,7 @@ class TicketController extends APIController
         $i = 0;
         foreach ($result as $key) {
           $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
+          $result[$i]['assignTo'] = $this->retrieveAccountDetails($result[$i]['assigned_to']);
         }
       }
       
@@ -64,6 +66,13 @@ class TicketController extends APIController
       //TODO: add authentication here
       $data = $request->all();
       $result = Ticket::where('code', '=', $data['code'])->update(array('status' => 'CLOSED'));
+      $this->response['data'] = $result ? true : false;
+      return $this->response();
+    }
+
+    public function updateAssign(Request $request){
+      $data = $request->all();
+      $result = Ticket::where('id', '=', $data['ticket_id'])->update(array('assigned_to' => $data['assigned_to']));
       $this->response['data'] = $result ? true : false;
       return $this->response();
     }
