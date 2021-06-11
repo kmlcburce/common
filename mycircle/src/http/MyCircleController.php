@@ -144,7 +144,9 @@ class MyCircleController extends APIController
             $j = 0;
             foreach ($mycircle as $value) {
                if ($value['account'] == $data['account_id'] || $value['account_id'] == $data['account_id']) {
-                  $result[$i]['is_added'] = true;
+                  if ($result[$i]['id'] == $value['account'] || $result[$i]['id'] == $value['account_id']) {
+                     $result[$i]['is_added'] = true;
+                  }
                } else {
                   $result[$i]['is_added'] = false;
                }
