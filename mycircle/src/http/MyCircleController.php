@@ -118,7 +118,7 @@ class MyCircleController extends APIController
          $result[$i]['status'] = $key['status'];
          $result[$i]['account_id'] = $key['account_id'];
          $accountId = $value == $result[$i]['account_id'] ? $key['account'] : $key['account_id'];
-         $othersConnection = $this->retrieveOtherConnection($accountId, $data['condition'][0]['value']);
+         $othersConnection = $this->retrieveOtherConnection($accountId, $value);
          $a = 0;
          $result[$i]['similar_connections'] = $othersConnection;
          $result[$i]['account'] = $this->retrieveFullAccountDetails($accountId);
@@ -137,20 +137,14 @@ class MyCircleController extends APIController
       $result = Account::where('id', '!=', $data['account_id'])->where('deleted_at', '=', null)->limit($data['limit'])->offset($data['offset'])->get();
       foreach ($result as $keyAcc) {
          $result[$i]['is_added'] = false;
+         $result[$i]['similar_connections'] = $this->retrieveOtherConnection($keyAcc['id'], $data['account_id']);
          $temp = MyCircle::where('account', '=', $keyAcc['id'])->orWhere('account_id', '=', $keyAcc['id'])->where('deleted_at', '=', null)->get();
          if (sizeof($temp) > 0) {
             $mycircle = MyCircle::where('account', '=', $data['account_id'])->orWhere('account_id', '=', $data['account_id'])->where('deleted_at', '=', null)->get();
             $j = 0;
             foreach ($mycircle as $value) {
-               $count = 0;
                if ($value['account'] == $data['account_id'] || $value['account_id'] == $data['account_id']) {
-                  if ($result[$i]['id'] == $value['account'] || $result[$i]['id'] == $value['account_id']) {
-                     $othersId = $data['account_id'] === $value['account'] ? $value['account_id'] : $value['account'];
-                     $othersConnection = $this->retrieveOtherConnection($othersId, $data['account_id']);
-                     $a = 0;
-                     $result[$i]['similar_connections'] = $othersConnection;
-                     $result[$i]['is_added'] = true;
-                  }
+                  $result[$i]['is_added'] = true;
                } else {
                   $result[$i]['is_added'] = false;
                }
@@ -206,50 +200,31 @@ class MyCircleController extends APIController
       }
    }
 
-   public function retrieveOtherConnection($accountId, $ownerId)
-   {
+   public function retrieveOtherConnection($accountId, $userId) {
       $count = 0;
-      $temp1 = MyCircle::where('account_id', '=', $accountId)->get();
-      $temp2 = MyCircle::where('account_id', '=', $ownerId)->get();
-      $temp3 = MyCircle::where('account', '=', $accountId)->get();
-      $temp4 = MyCircle::where('account', '=', $ownerId)->get();
-      $a=0;
-      foreach ($temp3 as $key3) {
-         $b=0;
-         foreach ($temp4 as $key4) {
-            if(($key3['account_id'] == $key4['account_id']) && ($key3['account'] !== $ownerId && $key4['account'] !== $accountId)){
-               $count++;
-            }
-            $b++;
-         }
-         $a++;
+      $result1 = MyCircle::where(function ($query) use ($accountId) {
+         $query->where('account_id', '=', $accountId)
+            ->orWhere('account', '=', $accountId);
+      })->where('status', '=', 'accepted')->get();
+      $result2 = MyCircle::where(function ($query) use ($userId) {
+         $query->where('account_id', '=', $userId)
+            ->orWhere('account', '=', $userId);
+      })->where('status', '=', 'accepted')->get();
+      $firstIds = array();
+      $secondIds = array();
+      $i = 0;
+      foreach($result1 as $el) {
+         $id1 = $accountId == $el['account_id'] ? $el['account'] : $el['account_id'];
+         array_push($firstIds, $id1);
+         $i++;
       }
-
-      $c=0;
-      foreach ($temp1 as $key1) {
-         $d=0;
-         foreach ($temp2 as $key2) {
-            if(($key1['account'] == $key2['account']) && ($key1['account_id'] !== $ownerId && $key2['account_id'] !== $accountId)){
-               $count++;
-            }
-            $d++;
-         }
-         $c++;
+      $o = 0;
+      foreach($result2 as $el) {
+         $id2 = $userId == $el['account_id'] ? $el['account'] : $el['account_id'];
+         array_push($secondIds, $id2);
+         $o++;
       }
-
-      // $result = MyCircle::where(function ($query) use ($accountId) {
-      //    $query->where('account_id', '=', $accountId)
-      //       ->orWhere('account', '=', $accountId);
-      // })->where('status', '=', 'accepted')->get();
-      // $i=0;
-      // $res = array();
-      // foreach ($result as $key) {
-      //    if ($key['account'] !== $ownerId && $key['account_id'] !== $ownerId) {
-      //          array_push($res, $key);
-      //          $count++;
-      //    }
-      //    $i++;
-      // }
+      $count = count(array_intersect($firstIds, $secondIds));
       return $count;
    }
 }
