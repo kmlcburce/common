@@ -148,4 +148,12 @@ class ImageController extends APIController
       ));
     }
 
+    public function retrieveFeaturedPhotos($payload, $payload_value, $payload1, $payload_value1){
+      $result = Image::where($payload, '=', $payload_value)->where($payload1, '=', $payload_value1)->where('deleted_at', '=', null)->get();
+      if(sizeof($result) > 0) {
+        return $result;
+      } else {
+        return [];
+      }
+    }
 }
