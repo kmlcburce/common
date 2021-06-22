@@ -229,4 +229,12 @@ class MyCircleController extends APIController
       $count = count(array_intersect($firstIds, $secondIds));
       return $count;
    }
+
+   public function profile(Request $request) {
+      $data = $request->all();
+      $accountId = $data['account_id'];
+      $userId = $data['user_id'];
+      $this->response['data'] = $this->retrieveOtherConnection($accountId, $userId);
+      return $this->response();
+   }
 }
