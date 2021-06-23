@@ -118,7 +118,7 @@ class MyCircleController extends APIController
          $result[$i]['status'] = $key['status'];
          $result[$i]['account_id'] = $key['account_id'];
          $accountId = $value == $result[$i]['account_id'] ? $key['account'] : $key['account_id'];
-         $othersConnection = $this->retrieveOtherConnection($accountId, $value);
+         $othersConnection = $this->retrieveOtherConnection($accountId, $data['account_id']);
          $a = 0;
          $result[$i]['similar_connections'] = $othersConnection;
          $result[$i]['account'] = $this->retrieveFullAccountDetails($accountId);
