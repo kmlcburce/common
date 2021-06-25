@@ -146,6 +146,20 @@ class NotificationController extends APIController
             // 'from'    => $result['from'],
             'to'      => $result['to']
           );
+        }else if($result['payload'] == 'device'){
+          $response = array(
+            'message' => 'Your Payhiram code for device verification is'. ' ' .$result['payload_value'],
+            'title'   => 'OTP Notification',
+            'type'    => 'notifications',
+            'topic'   => 'notifications',
+            'payload'    => $result['payload'],
+            'payload_value' => $result['payload_value'],
+            'route'   => $result['route'],
+            'date'    => $result['created_at_human'],
+            'id'      => $result['id'],
+            // 'from'    => $result['from'],
+            'to'      => $result['to']
+          );
         }else{
           $response = array(
             'message' => 'View Activity',
