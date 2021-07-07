@@ -84,7 +84,6 @@ class NotificationController extends APIController
           $result[$i] = $this->manageResultNew($result[$i], false);
           $i++;
         }
-        dd($result);
       }
       return response()->json(array(
         'data' => sizeof($result) > 0 ? $result : null,
