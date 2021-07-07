@@ -84,6 +84,7 @@ class NotificationController extends APIController
           $result[$i] = $this->manageResultNew($result[$i], false);
           $i++;
         }
+        dd($result);
       }
       return response()->json(array(
         'data' => sizeof($result) > 0 ? $result : null,
@@ -116,6 +117,8 @@ class NotificationController extends APIController
         $this->localization();
         // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
         $response = null;
+        $temp = Carbon::parse($result['created_at']);
+        $result['created_at'] = $temp->format('Y-m-d H:i:s');
         $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
 
         if($result['payload'] == 'Peer Request'){
@@ -190,6 +193,8 @@ class NotificationController extends APIController
       $tempCode =  strrpos($result['route'], '/');
       $code = substr($result['route'], $tempCode + 1);
       $response = null;
+      $temp = Carbon::parse($result['created_at']);
+      $result['created_at'] = $temp->format('Y-m-d H:i:s');
       $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
 
       if($result['payload'] == 'Peer Request'){
@@ -223,6 +228,20 @@ class NotificationController extends APIController
           'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['amount']),
           'to'      => $result['to']
         );
+      }else if($result['payload'] == 'device'){
+          $response = array(
+            'message' => 'Your Payhiram code for device verification is'. ' ' .$result['payload_value'],
+            'title'   => 'OTP Notification',
+            'type'    => 'notifications',
+            'topic'   => 'notifications',
+            'payload'    => $result['payload'],
+            'payload_value' => $result['payload_value'],
+            'route'   => $result['route'],
+            'date'    => $result['created_at_human'],
+            'id'      => $result['id'],
+            // 'from'    => $result['from'],
+            'to'      => $result['to']
+          );
       }else{
         $response = array(
           'message' => 'View Activity',
@@ -268,6 +287,23 @@ class NotificationController extends APIController
       $model->save();
       $result = Notification::where('id', '=', $model->id)->get();
       $this->manageResult($result[0], true);
+      return true;
+    }
+
+    public function createByParamsByDevice($parameter, $device){
+      $model = new Notification();
+      $model->from = $parameter['from'];
+      $model->to = $parameter['to'];
+      $model->payload = $parameter['payload'];
+      $model->payload_value = $parameter['payload_value'];
+      $model->route = $parameter['route'];
+      $model->created_at = $parameter['created_at'];
+      $model->updated_at = null;
+      $model->save();
+      $result = Notification::where('id', '=', $model->id)->get();
+
+      $parameter['to'] = $device;
+      // $this->manageResult($result[0], true);
       return true;
     }
 }
