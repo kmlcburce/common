@@ -7,6 +7,8 @@ use Increment\Common\MyCircle\Models\MyCircle;
 use Increment\Account\Models\Account;
 use Illuminate\Http\Request;
 use App\Http\Controllers\EmailController;
+use Increment\Account\Models\AccountProfile;
+use Increment\Account\Models\AccountInformation;
 use Mail;
 
 class MyCircleController extends APIController
@@ -121,14 +123,38 @@ class MyCircleController extends APIController
          $othersConnection = $this->retrieveOtherConnection($accountId, $data['account_id']);
          $a = 0;
          $result[$i]['similar_connections'] = $othersConnection;
-         $result[$i]['account'] = $this->retrieveFullAccountDetails($accountId);
-         unset($result[$i]['account']['billing']);
+         $result[$i]['account'] = $this->retrieveDetails($accountId);
          $result[$i]['rating'] = app($this->ratingClass)->getRatingByPayload('profile', $accountId);
          $i++;
          $this->response['data'] = $result;
       }
       return $this->response;
    }
+
+   public function retrieveDetails($accountId){
+      $result = $this->retrieveAccountById($accountId);
+      $result[0]['profile'] =  $this->getAccountProfile($accountId);
+      $result[0]['information'] = $this->getInformation($accountId);
+      return $result[0];
+    }
+
+    public function retrieveAccountById($accountId){
+      return Account::where('id', '=', $accountId)->select('id', 'username')->get();
+    }
+
+    public function getInformation($accountId){
+      $result = AccountInformation::where('account_id', '=', $accountId)->select('first_name', 'last_name', 'address')->get();
+      if(sizeof($result) > 0){
+        $result[0]['birth_date_human'] = ($result[0]['birth_date'] != null && $result[0]['birth_date'] != '') ?Carbon::createFromFormat('Y-m-d', $result[0]['birth_date'])->copy()->tz($this->response['timezone'])->format('F j, Y') : null;
+      }
+      return (sizeof($result) > 0) ? $result[0] : null;
+    }
+
+    public function getAccountProfile($accountId){
+      $result = AccountProfile::where('account_id', '=', $accountId)->orderBy('created_at', 'desc')->select('url')->get();
+      return (sizeof($result) > 0) ? $result[0] : null;
+    }
+
 
    public function retrieveOtherAccount(Request $request)
    {
@@ -160,8 +186,7 @@ class MyCircleController extends APIController
          foreach ($result as $key) {
             $result[$j]['status'] = $key['status'];
             $result[$j]['account_id'] =  $result[$j]['id'];
-            $result[$j]['account'] = $this->retrieveFullAccountDetails($result[$j]['id']);
-            unset($result[$j]['account']['billing']);
+            $result[$j]['account'] = $this->retrieveDetails($result[$j]['id']);
             $result[$j]['rating'] = app($this->ratingClass)->getRatingByPayload('profile',  $result[$j]['id']);
             $j++;
          }

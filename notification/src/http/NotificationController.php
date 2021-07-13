@@ -8,6 +8,7 @@ use Increment\Account\Models\Account;
 use Increment\Common\Notification\Models\Notification;
 use App\Http\Controllers\APIController;
 use App\Jobs\Notifications;
+use App\Synqt;
 class NotificationController extends APIController
 {
     function __construct(){
@@ -30,15 +31,22 @@ class NotificationController extends APIController
         $i = 0;
         foreach ($result as $key) {
           $result[$i]['reservee'] = $this->retrieveNameOnly($result[$i]['from']);
-          $result[$i]['synqt'] = app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
-          $result[$i]['location'] = Location::where('id', '=', app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value'])[0]->location_id)->get();
-          $result[$i]['merchant'] = app($merchantClass)->getByParams('id', $result[$i]['location'][0]->merchant_id);
+          $result[$i]['synqt'] = $this->retrieveOneSynqt('id', $result[$i]['payload_value']);
+          $result[$i]['location'] = Location::where('id', '=', app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value'])[0]->location_id)->select('route')->get();
+          // $result[$i]['merchant'] = app($merchantClass)->getByParams('id', $result[$i]['location'][0]->merchant_id);
           $result[$i]['members'] = app('Increment\Messenger\Http\MessengerGroupController')->getMembersByParams('payload', $result[$i]['payload_value'], ['id', 'title']);
           $i++;
         }
         $this->response['data'] = $result;
       }
       return $this->response();
+    }
+
+    public function retrieveOneSynqt($column, $value)
+    {
+        $result = Synqt::where($column, '=', $value)->where('deleted_at', '=', null)->select('id', 'date')->get();
+        $result[0]['date_at_human'] = Carbon::createFromFormat('Y-m-d', $result[0]['date'])->copy()->tz($this->response['timezone'])->format('F j, Y');
+        return sizeof($result) > 0 ? $result : [];
     }
 
     public function retrieve(Request $request){
