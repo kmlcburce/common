@@ -30,19 +30,17 @@ class TicketController extends APIController
 
     public function retrieve(Request $request){
       $data = $request->all();
-      // dd($data);
-      $whereArray = array(
-        array($data['condition'][0]['column'], $data['condition'][0]['clause'], $data['condition'][0]['value']),
-      );
-      if(isset($data[1]['column'])){
-        array_push($whereArray, array($data['condition'][1]['column'], $data['condition'][1]['clause'], $data['condition'][1]['value']));
-      };
-      $result = Ticket::where($whereArray)->get();
+      $this->model = new Ticket();
+      $this->retrieveDB($data);
+      $result = $this->response['data'];
+
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
-          $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
+          // $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
+          $result[$i]['created_at_human'] = $result[$i]['created_at'];
           $result[$i]['assignTo'] = $this->retrieveAccountDetails($result[$i]['assigned_to']);
+          $i++;
         }
       }
       
