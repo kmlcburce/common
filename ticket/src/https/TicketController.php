@@ -33,12 +33,13 @@ class TicketController extends APIController
       $this->model = new Ticket();
       $this->retrieveDB($data);
       $result = $this->response['data'];
-      
+
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
           $result[$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
           $result[$i]['assignTo'] = $this->retrieveAccountDetails($result[$i]['assigned_to']);
+          $i++;
         }
       }
       
