@@ -133,13 +133,14 @@ class MyCircleController extends APIController
 
    public function retrieveDetails($accountId){
       $result = $this->retrieveAccountById($accountId);
+      $result[0]['email'] = $result[0]->email;
       $result[0]['profile'] =  $this->getAccountProfile($accountId);
       $result[0]['information'] = $this->getInformation($accountId);
       return $result[0];
     }
 
     public function retrieveAccountById($accountId){
-      return Account::where('id', '=', $accountId)->select('id', 'username')->get();
+      return Account::where('id', '=', $accountId)->select('id', 'username', 'email')->get();
     }
 
     public function getInformation($accountId){
