@@ -26,6 +26,7 @@ class NotificationController extends APIController
       $data = $request->all();
       $this->model = new Notification();
       $this->retrieveDB($data);
+      dd($data);
       $result = $this->response['data'];
       if(sizeof($result) > 0){
         $i = 0;
