@@ -1,6 +1,4 @@
 <?php
-$route = env('PACKAGE_ROUTE', '').'/mails/';
-$controller = 'Increment\Common\Mail\Http\MailController@';
-Route::post($route.'bounce', $controller."bounceHandler");
-Route::post($route.'complaints', $controller."complaintHandler");
-Route::post($route.'delivered', $controller."deliveredHandler");
+Route::any('/ses-bounce-payhiram', [Increment\Common\Mail\Http\MailController::class, 'handle']);
+Route::any('/ses-complaints-payhiram', [Increment\Common\Mail\Http\MailController::class, 'handle']);
+Route::any('/ses-deliveries-payhiram', [Increment\Common\Mail\Http\MailController::class, 'handle']);
