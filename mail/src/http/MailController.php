@@ -4,10 +4,9 @@ namespace Increment\Common\Mail\Http;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
-use RenokiCo\AwsWebhooks\Http\Controllers\SesWebhook;
-class MailController extends SesWebhook
+class MailController extends APIController
 {
-  protected function onBounce(array $message, array $originalMessage, Request $request){
+  protected function onBounce(Request $request){
     $email = null;
 
     if($email){
@@ -18,14 +17,22 @@ class MailController extends SesWebhook
 
       // unsubscribe
     }
+
+    return array(
+      "data" => json_encode($request->all())
+    );
   }
   
-  protected function onComplaint(array $message, array $originalMessage, Request $request){
-      //
+  protected function onComplaint(Request $request){
+    return array(
+      "data" => json_encode($request->all())
+    );
   }
 
-  protected function onDelivery(array $message, array $originalMessage, Request $request){
-      //
+  protected function onDelivery(Request $request){
+    return array(
+      "data" => json_encode($request->all())
+    );
   }
 
   protected function onSend(array $message, array $originalMessage, Request $request){
