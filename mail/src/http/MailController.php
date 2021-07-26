@@ -10,10 +10,10 @@ class MailController extends APIController
     $email = null;
 
     if($email){
-      app('Increment\Account\Http\AccountController')->updateByParamsByEmail($email, array((
+      app('Increment\Account\Http\AccountController')->updateByParamsByEmail($email, array(
         'status' => 'INVALID_EMAIL',
         'updated_at' => Carbon::now()
-      )));
+      ));
 
       // unsubscribe
     }
