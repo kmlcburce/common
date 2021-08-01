@@ -6,11 +6,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 class MailController extends APIController
 {
+  public $emailController = 'App\Http\Controllers\EmailController';
   protected function onBounce(Request $request){
     $content = json_decode($request->getContent(), true);
     $message = $content && isset($content['Message']) ? json_decode($content['Message'], true) : null;
 
-    if($message){
+    if($content && isset($content['Type']) && $content['Type'] == 'SubscriptionConfirmation'){
+      app($this->emailController)->setupSNS($request->getContent());
+    }else if($message){
       $recipients = $message ? $message['bounce']['bouncedRecipients'] : null;
       if($recipients && sizeof($recipients) > 0){
         foreach ($recipients as $key => $recipient) {
@@ -31,6 +34,11 @@ class MailController extends APIController
   
   protected function onComplaint(Request $request){
     $content = json_decode($request->getContent(), true);
+    if($content && isset($content['Type']) && $content['Type'] == 'SubscriptionConfirmation'){
+      app($this->emailController)->setupSNS($request->getContent());
+    }else{
+      //
+    }
     return array(
       "data" => $content
     );
@@ -38,6 +46,9 @@ class MailController extends APIController
 
   protected function onDelivery(Request $request){
     $content = json_decode($request->getContent(), true);
+    if($content && isset($content['Type']) && $content['Type'] == 'SubscriptionConfirmation'){
+      app($this->emailController)->setupSNS($request->getContent());
+    }
     return 200;
   }
 
