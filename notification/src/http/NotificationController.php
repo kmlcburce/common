@@ -124,8 +124,8 @@ class NotificationController extends APIController
         $this->localization();
         // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
         $response = null;
-        $temp = Carbon::parse($result['created_at']);
-        $result['created_at'] = $temp->format('Y-m-d H:i:s');
+        // $temp = Carbon::parse($result['created_at']);
+        // $result['created_at'] = $temp->format('Y-m-d H:i:s');
         $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
 
         if($result['payload'] == 'Peer Request'){
@@ -195,14 +195,14 @@ class NotificationController extends APIController
     }
 
     public function manageResultNew($result, $notify = false){
-      // $this->localization();
+      $this->localization();
       // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
       $tempCode =  strrpos($result['route'], '/');
       $code = substr($result['route'], $tempCode + 1);
       $response = null;
       // dd($result['created_at']);
-      $temp = Carbon::parse($result['created_at']);
-      $result['created_at'] = $temp->format('Y-m-d H:i:s');
+      // $temp = Carbon::parse($result['created_at']);
+      // $result['created_at'] = $temp->format('Y-m-d H:i:s');
       $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
 
       if($result['payload'] == 'Peer Request'){
