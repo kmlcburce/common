@@ -70,7 +70,12 @@ class TicketController extends APIController
 
     public function updateAssign(Request $request){
       $data = $request->all();
-      $result = Ticket::where('id', '=', $data['ticket_id'])->update(array('assigned_to' => $data['assigned_to']));
+      $result = Ticket::where('id', '=', $data['ticket_id'])
+        ->update(
+            array(
+              'assigned_to' => $data['assigned_to'],
+              'status' => $data['status']
+            ));
       $this->response['data'] = $result ? true : false;
       return $this->response();
     }
