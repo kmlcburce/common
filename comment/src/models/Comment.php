@@ -15,10 +15,10 @@ class Comment extends APIModel
     return intval($value);
   }
 
-  public function getCreatedAtAttribute($value){
-    return $this->formatDateTime($value);
-    // return Carbon::createFromFormat($this->dateTimeFormat, $this->formatDateTime($value))->copy()->diffForHumans();
-  }
+  // public function getCreatedAtAttribute($value){
+  //   return $this->formatDateTime($value);
+  //   // return Carbon::createFromFormat($this->dateTimeFormat, $this->formatDateTime($value))->copy()->diffForHumans();
+  // }
 
 }
 
