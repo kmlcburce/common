@@ -15,6 +15,9 @@ class Comment extends APIModel
     return intval($value);
   }
 
+  public function getCreatedAtAttribute($value){
+    return Carbon::createFromTimestampUTC($value)->copy()->diffInHumans();
+  }
 
 }
 
