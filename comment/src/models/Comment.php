@@ -16,7 +16,7 @@ class Comment extends APIModel
   }
 
   public function getCreatedAtAttribute($value){
-    return Carbon::createFromTimestampUTC($value)->copy()->diffForHumans();
+    return Carbon::createFromFormat($this->dateTimeFormat, $this->formatDateTime($value))->copy()->diffForHumans();
   }
 
 }
