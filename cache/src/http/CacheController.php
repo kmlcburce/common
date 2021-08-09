@@ -10,16 +10,30 @@ use Carbon\Carbon;
 class CacheController extends APIController
 {
     public function insert($key, $value){
-        // $data = $request->all();
-        // $key = $data['key'];
-        // $value = $data['value'];
         $res = Cache::put($key, $value);
         return $res;
     }
 
-    public function retrieve($key){
-        // $data = $request->all();
-        // $key = $data['key'];
+    public function insertArray($keys, $value){
+        $array = array();
+        array_push($array, $value);
+        $res = Cache::get($keys);
+        if($res !== null){
+            if(is_array($res)){
+                $i=0;
+                foreach ($res as $key) {
+                    array_push($array, $key);
+                    $i++;
+                }
+            }
+        }
+        $res = Cache::put($keys, $array);
+        return $res;
+    }
+
+    public function retrieve(Request $request){
+        $data = $request->all();
+        $key = $data['key'];
         $data = Cache::get($key);
         return $data;
     }
