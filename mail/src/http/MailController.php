@@ -6,33 +6,50 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 class MailController extends APIController
 {
+  public $emailController = 'App\Http\Controllers\EmailController';
   protected function onBounce(Request $request){
-    $email = null;
+    $content = json_decode($request->getContent(), true);
+    $message = $content && isset($content['Message']) ? json_decode($content['Message'], true) : null;
 
-    if($email){
-      app('Increment\Account\Http\AccountController')->updateByParamsByEmail($email, array(
-        'status' => 'INVALID_EMAIL',
-        'updated_at' => Carbon::now()
-      ));
+    if($content && isset($content['Type']) && $content['Type'] == 'SubscriptionConfirmation'){
+      app($this->emailController)->setupSNS($request->getContent());
+    }else if($message){
+      $recipients = $message ? $message['bounce']['bouncedRecipients'] : null;
+      if($recipients && sizeof($recipients) > 0){
+        foreach ($recipients as $key => $recipient) {
+          if($recipient['emailAddress']){
+            app('Increment\Account\Http\AccountController')->updateByParamsByEmail($recipient['emailAddress'], array(
+              'status' => 'INVALID_EMAIL',
+              'updated_at' => Carbon::now()
+            ));
 
-      // unsubscribe
+            // unsubscribe
+          }
+        }
+      }
     }
 
-    return array(
-      "data" => json_encode($request->all())
-    );
+    return 200;
   }
   
   protected function onComplaint(Request $request){
+    $content = json_decode($request->getContent(), true);
+    if($content && isset($content['Type']) && $content['Type'] == 'SubscriptionConfirmation'){
+      app($this->emailController)->setupSNS($request->getContent());
+    }else{
+      //
+    }
     return array(
-      "data" => json_encode($request->all())
+      "data" => $content
     );
   }
 
   protected function onDelivery(Request $request){
-    return array(
-      "data" => json_encode($request->all())
-    );
+    $content = json_decode($request->getContent(), true);
+    if($content && isset($content['Type']) && $content['Type'] == 'SubscriptionConfirmation'){
+      app($this->emailController)->setupSNS($request->getContent());
+    }
+    return 200;
   }
 
   protected function onSend(array $message, array $originalMessage, Request $request){
