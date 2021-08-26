@@ -118,6 +118,14 @@ class PayloadController extends APIController
       return $this->response();
     }
 
+    public function getCurrencyParams($accountId){
+      $id = Payload::where('account_id', '=', $accountId)
+            ->where('payload','=', 'available_currency')
+            ->get();
+      $this->response['data'] = $id;
+      return $this->response();
+    }
+
     public function getCategory(Request $request){
       $data = $request->all();
       if (isset($data['account_id'])){
