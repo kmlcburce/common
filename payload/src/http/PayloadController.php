@@ -100,6 +100,25 @@ class PayloadController extends APIController
       //payload_id would be linked to category in product same with tags ??
     }
 
+    public function createCurrency(Request $request){
+      $data = $request->all();
+      $data['payload'] = 'available_currency';
+      $data['payload_value'] = $data['currency'];
+      $data['category'] = NULL;
+      $this->model = new Payload();
+      $this->insertDB($data);
+      return $this->response();
+    }
+
+    public function getCurrency(Request $request){
+      $data=$request->all();
+      $id = Payload::where('account_id','=',$data['account_id'])
+            ->where('payload','=', 'available_currency')
+            ->get();
+      $this->response['data'] = $id;
+      return $this->response();
+    }
+
     public function getCategory(Request $request){
       $data = $request->all();
       if (isset($data['account_id'])){
