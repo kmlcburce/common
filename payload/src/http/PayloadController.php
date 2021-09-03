@@ -123,8 +123,8 @@ class PayloadController extends APIController
       $id = Payload::where('account_id', '=', $accountId)
             ->where('payload','=', 'available_currency')
             ->get();
-      $this->response['data'] = $id;
-      return $this->response();
+      return $id;
+
     }
 
     public function getCategory(Request $request){
