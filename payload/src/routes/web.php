@@ -13,4 +13,6 @@ Route::post($route.'get_category', $controller."getCategory");
 Route::post($route.'get_resource', $controller."getResource");
 Route::post($route.'create_industry', $controller."createIndustry");
 Route::post($route.'faqs', $controller."retrieveFaqs");
+Route::post($route.'create_currency', $controller."createCurrency");
+Route::post($route.'get_currency', $controller."getCurrency");
 Route::get($route.'test', $controller."test");
