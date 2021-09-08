@@ -6,14 +6,48 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Common\Payload\Models\Payload;
 use Increment\Common\Image\Models\Image;
+use Carbon\Carbon;
 class PayloadController extends APIController
 {
+    public $merchantController = 'Increment\Imarket\Merchant\Http\MerchantController';
     function __construct(){
       if($this->checkAuthenticatedUser() == false){
         return $this->response();
       }
       $this->model = new Payload();
       $this->notRequired = array('category');
+    }
+
+    public function createIndustry(Request $request){
+      $data = $request->all();
+      $con = $this->checkValidIndustry($data['account_id']);
+      if($con === false){
+        $this->model = new Payload();
+        $this->insertDB($data);
+        $var = array('industry' => $data['payload_value']);
+        app($this->merchantController)->updateByParams('account_id', $data['account_id'], array('addition_informations'=>$var));
+        return $this->response();
+      }else{
+        $result = Payload::where('account_id', '=', $data['account_id'])->update(array(
+          'payload_value' => $data['payload_value'],
+          'updated_at' => Carbon::now()
+       ));
+        $var = array('industry' => $data['payload_value']);
+        app($this->merchantController)->updateByParams('account_id', $data['account_id'], array('addition_informations'=>$var));
+        $this->response['data'] = $result;
+        return $this->response();
+      }
+    }
+
+    public function checkValidIndustry($accountId){
+      $payload = Payload::where('payload', '=', 'assigned_industry')
+            ->where('account_id', '=', $accountId)
+            ->get();
+      if(sizeof($payload) > 0){
+        return true;
+      }else{
+        return false;
+      }
     }
 
     public function uploadValidId(Request $request){
