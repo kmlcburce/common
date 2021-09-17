@@ -2,7 +2,9 @@
 $route = env('PACKAGE_ROUTE', '').'/payloads/';
 $controller = 'Increment\Common\Payload\Http\PayloadController@';
 Route::post($route.'create', $controller."create");
+Route::post($route.'create_with_images', $controller."createWithImages");
 Route::post($route.'retrieve', $controller."retrieve");
+Route::post($route.'retrieve_with_images', $controller."retrieveWithImage");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
 Route::post($route.'get_valid_id', $controller."checkValidId");

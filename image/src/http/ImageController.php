@@ -10,7 +10,7 @@ class ImageController extends APIController
 {
     function __construct(){
       $this->notRequired = array(
-        'category'
+        'category', 'payload', 'payload_value',
       );
       if($this->checkAuthenticatedUser() == false){
         return $this->response();
