@@ -8,7 +8,7 @@ use App\APIModel;
 class Payload extends APIModel
 {
     protected $table = 'payloads';
-    protected $fillable = ['account_id', 'payload', 'payload_value' ];
+    protected $fillable = ['account_id', 'payload', 'payload_value', 'category'];
 
 }
 

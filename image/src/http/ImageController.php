@@ -156,4 +156,6 @@ class ImageController extends APIController
         return [];
       }
     }
+
+    // public function removeImages($)
 }
