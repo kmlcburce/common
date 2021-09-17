@@ -196,7 +196,7 @@ class PayloadController extends APIController
           for ($i=0; $i <= sizeof($data['images'])-1 ; $i++) { 
             $item = $data['images'][$i];
             $params = array(
-              'room_id' => $res['id'],
+              'room_id' => $data['status'] === 'create' ? $res['id'] : $res,
               'url' => $item['url'],
               'status' => 'featured'
             );
