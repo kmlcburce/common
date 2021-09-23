@@ -176,4 +176,73 @@ class PayloadController extends APIController
       $result = Payload::where($arrayCondition)->get();
       return sizeof($result) > 0 ? $result[0] : null;
     }
+    
+    public function createWithImages(Request $request){
+      $data = $request->all();
+      $payload = array(
+        'account_id'    => $data['account_id'],
+        'payload' => $data['payload'],
+        'category' => $data['category'],
+        'payload_value' => $data['payload_value'],
+      );
+      if($data['status'] === 'create'){
+        $res = Payload::create($payload);
+      }else if($data['status'] === 'update'){
+        $payload['updated_at'] = Carbon::now();
+        $res = Payload::where('id', '=', $data['id'])->update($payload);
+      }
+      if(isset($data['images'])){
+        if(sizeof($data['images']) > 0){
+          for ($i=0; $i <= sizeof($data['images'])-1 ; $i++) { 
+            $item = $data['images'][$i];
+            $params = array(
+              'room_id' => $data['status'] === 'create' ? $res['id'] : $res,
+              'url' => $item['url'],
+              'status' => 'featured'
+            );
+            app('Increment\Hotel\Room\Http\ProductImageController')->addImage($params);
+          }
+        }
+      }
+      $this->response['data'] = $res;
+      return $this->response();
+    }
+
+    public function retrieveWithImage(Request $request){
+      $data = $request->all();
+      $con = $data['condition'];
+      $res = Payload::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
+        ->where('deleted_at', '=', null)
+        ->where('payload', '=', $data['payload'])
+        ->offset($data['offset'])->limit($data['limit'])
+        ->orderBy(array_keys($data['sort'])[0], array_values($data['sort'])[0])
+        ->get();
+      if(sizeof($res) > 0){
+        for ($i=0; $i <= sizeof($res)-1; $i++) {
+          $item = $res[$i];
+          $res[$i]['image'] = app('Increment\Hotel\Room\Http\ProductImageController')->getImage($item['id']);
+        }
+      }
+      $this->response['data'] = $res;
+      return $this->response();
+    }
+
+    public function retrieveById(Request $request){
+      $data = $request->all();
+      $res = Payload::where('id', $data['id'])->first();
+      $res['images'] = app('Increment\Hotel\Room\Http\ProductImageController')->getImages($res['id']);
+      $this->response['data'] = $res;
+      return $this->response();
+    }
+
+    public function removeWithImage(Request $request){
+      $data = $request->all();
+      $res = Payload::where('id', '=', $data['id'])->update(array(
+        'deleted_at' => Carbon::now()
+      ));
+      app('Increment\Hotel\Room\Http\ProductImageController')->removeImages($data['id']);
+
+      $this->response['data'] = $res;
+      return $this->response();
+    }
 }
