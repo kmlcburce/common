@@ -200,7 +200,7 @@ class NotificationController extends APIController
     }
 
     public function manageResultNew($result, $notify = false){
-      // $this->localization();
+      $this->localization();
       // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
       $tempCode =  strrpos($result['route'], '/');
       $code = substr($result['route'], $tempCode + 1);

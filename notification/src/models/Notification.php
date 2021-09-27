@@ -18,10 +18,10 @@ class Notification extends APIModel
       return intval($value);
     }
 
-    public function getCreatedAtAttribute($value){
-      return Carbon::createFromFormat('Y-m-dTH:i:s', $value)->format('Y-m-d H:i:s');
-      // return $value;
-    }
+    // public function getCreatedAtAttribute($value){
+    //   return Carbon::createFromFormat('Y-m-d H:i:s', $value)->format('Y-m-d H:i:s');
+    //   // return $value;
+    // }
 
 }
 
