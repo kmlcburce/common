@@ -23,6 +23,7 @@ class CommentController extends APIController
         $data['title'] = 'New comment added to your ticket';
         $data['message'] = $data['text'];
         $data['from'] = $data['account_id'];
+        $data['created_at'] = Carbon::now();
         app('Increment\Common\Notification\Http\NotificationController')->createByParams($data);
         if(isset($data['to'])){
           $data['to'] = 'ticket-comment-'.$data['to'];
