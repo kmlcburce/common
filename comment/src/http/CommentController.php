@@ -23,9 +23,11 @@ class CommentController extends APIController
         $data['title'] = 'New comment added to your ticket';
         $data['message'] = $data['text'];
         app('Increment\Common\Notification\Http\NotificationController')->createByParams($data);
-        $data['to'] = 'ticket-comment-'.$data['payload_value'];
-        $data['topic'] = 'ticket-comment';
-        Notifications::dispatch('ticket-comment', $data);
+        if(isset($data['to'])){
+          $data['to'] = 'ticket-comment-'$data['to'];
+          $data['topic'] = 'ticket-comment';
+          Notifications::dispatch('ticket-comment', $data);
+        }
       }
       return $this->response();
     }
