@@ -24,7 +24,7 @@ class CommentController extends APIController
         $data['message'] = $data['text'];
         app('Increment\Common\Notification\Http\NotificationController')->createByParams($data);
         if(isset($data['to'])){
-          $data['to'] = 'ticket-comment-'$data['to'];
+          $data['to'] = 'ticket-comment-'.$data['to'];
           $data['topic'] = 'ticket-comment';
           $data['account'] = $this->retrieveAccountDetailsOnRequests($data['account_id']);
           $data['created_at_human'] = Carbon::now()->copy()->diffForHumans();
