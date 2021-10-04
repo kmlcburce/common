@@ -3,6 +3,7 @@ $route = env('PACKAGE_ROUTE', '').'/comments/';
 $controller = 'Increment\Common\Comment\Http\CommentController@';
 //Comments
 Route::post($route.'create', $controller."create");
+Route::post($route.'create_with_notification', $controller."createWithNotification");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'retrieve_comments', $controller."retrieveComments");
 Route::post($route.'update', $controller."update");
