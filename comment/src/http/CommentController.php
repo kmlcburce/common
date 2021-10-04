@@ -7,10 +7,27 @@ use Increment\Common\Comment\Models\Comment;
 use Increment\Common\Comment\Models\CommentReply;
 use App\Http\Controllers\APIController;
 use Carbon\Carbon;
+use App\Jobs\Notifications;
 class CommentController extends APIController
 {
     function __construct(){
       $this->model = new Comment();
+    }
+
+    public function createWithNotification(Request $request){
+      $data = $request->all();
+      $this->model = new Comment();
+      $this->insertDB($data);
+      if($this->response['data']){
+        $data['id'] = $this->response['data'];
+        $data['title'] = 'New comment added to your ticket';
+        $data['message'] = $data['text'];
+        app('Increment\Common\Notification\Http\NotificationController')->createByParams($data);
+        $data['to'] = 'ticket-comment-'.$data['payload_value'];
+        $data['topic'] = 'ticket-comment';
+        Notifications::dispatch('ticket-comment', $data);
+      }
+      return $this->response();
     }
 
     public function retrieve(Request $request){
