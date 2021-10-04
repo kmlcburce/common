@@ -119,14 +119,14 @@ class NotificationController extends APIController
       return array($result);
     }
     
-
+    
     public function manageResult($result, $notify = false){
-        $this->localization();
-        // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
-        $response = null;
-        // $temp = Carbon::parse($result['created_at']);
-        // $result['created_at'] = $temp->format('Y-m-d H:i:s');
-        $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
+      $this->localization();
+      // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
+      $response = null;
+      // $temp = Carbon::parse($result['created_at']);
+      // $result['created_at'] = $temp->format('Y-m-d H:i:s');
+      $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
 
         if($result['payload'] == 'Peer Request'){
           $response = array(
@@ -168,6 +168,22 @@ class NotificationController extends APIController
             'date'    => $result['created_at_human'],
             'id'      => $result['id'],
             // 'from'    => $result['from'],
+            'to'      => $result['to']
+          );
+        }else if($result['payload'] == 'thread'){
+          $response = array(
+            'message' => "Your proposal was accepted",
+            'title'   => "New Thread Message",
+            'type'    => 'notifications',
+            'topic'   => 'notifications',
+            'payload'    => $result['payload'],
+            'payload_value' => $result['payload_value'],
+            'route'   => $result['route'],
+            'date'    => $result['created_at_human'],
+            'id'      => $result['id'],
+            // 'from'    => $result['from'],
+            'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['currency']),
+            'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['amount']),
             'to'      => $result['to']
           );
         }else{
