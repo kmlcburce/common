@@ -26,6 +26,8 @@ class CommentController extends APIController
         if(isset($data['to'])){
           $data['to'] = 'ticket-comment-'$data['to'];
           $data['topic'] = 'ticket-comment';
+          $data['account'] = $this->retrieveAccountDetailsOnRequests($data['account_id']);
+          $data['created_at_human'] = Carbon::now()->copy()->diffForHumans();
           Notifications::dispatch('ticket-comment', $data);
         }
       }
