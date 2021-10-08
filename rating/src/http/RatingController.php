@@ -66,7 +66,7 @@ class RatingController extends APIController
     public function retrieveById(Request $request){
       $data = $request->all();
       $this->retrieveDB($data);
-      $result = $this->response['data'];
+      return $this->response();
     }
 
     public function checkAccountExist($accountId, $payload, $payloadValue){
