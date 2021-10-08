@@ -31,9 +31,7 @@ class CacheController extends APIController
         return $res;
     }
 
-    public function retrieve(Request $request){
-        $data = $request->all();
-        $key = $data['key'];
+    public function retrieve($key){
         $data = Cache::get($key);
         return $data;
     }
