@@ -63,6 +63,12 @@ class RatingController extends APIController
       return $this->response();
     }
 
+    public function retrieveById(Request $request){
+      $data = $request->all();
+      $this->retrieveDB($data);
+      $result = $this->response['data'];
+    }
+
     public function checkAccountExist($accountId, $payload, $payloadValue){
       $result = Rating::where('account_id', '=', $accountId)
       ->where('payload', '=', $payload)
