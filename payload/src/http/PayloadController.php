@@ -18,6 +18,12 @@ class PayloadController extends APIController
       $this->notRequired = array('category');
     }
 
+    public function createByParams($data){
+      $this->model = new Payload();
+      $this->insertDB($data);
+      return $this->response['data'];
+    }
+
     public function createIndustry(Request $request){
       $data = $request->all();
       $con = $this->checkValidIndustry($data['account_id']);
