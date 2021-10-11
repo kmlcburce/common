@@ -250,6 +250,7 @@ class NotificationController extends APIController
           // 'from'    => $result['from'],
           'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['currency']),
           'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['amount']),
+          'request' => app('App\Http\Controllers\RequestMoneyController')->retrieveByPayloadValue($result['payload_value']),
           'to'      => $result['to']
         );
       }else if($result['payload'] == 'device'){
