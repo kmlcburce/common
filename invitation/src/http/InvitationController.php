@@ -112,4 +112,29 @@ class InvitationController extends APIController
          app('App\Http\Controllers\EmailController')->notifyReferrer($referrral[0]['account_id']);
       }
    }
+
+   public function createWithValidationParams($accountId, $email){
+	$exist = $this->checkIfExistEmails($accountId, $email);
+
+	if($exist == false){
+		$user = $this->retrieveAccountDetails($accountId);
+	   $insertData = array(
+		   'code' => $this->generateCode(),
+		   'account_id'	=> $accountId,
+		   'address'	=> $email,
+		   'status'	=> 'sent'
+	   );
+	   $this->model = new Invitation();
+	   $this->insertDB($insertData);
+	   // lacking content cherry
+	   if($this->response['data'] > 0 && $user != null){
+		   Mail::to($email)->send(new Referral($user, $data['content'], $email, $this->getDetails($this->response['data']), $this->response['timezone']));
+	   }
+	   return $this->response();
+	}else{
+		$this->response['data'] = null;
+		$this->response['error'] = $exist;
+		return $this->response();
+	}
+}
 }
