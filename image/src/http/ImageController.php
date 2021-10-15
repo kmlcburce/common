@@ -7,6 +7,7 @@ use Increment\Common\Image\Models\Image;
 use App\Http\Controllers\APIController;
 use Illuminate\Support\Facades\Storage;
 use File;
+use Response;
 class ImageController extends APIController
 {
     function __construct(){
