@@ -114,6 +114,12 @@ class PayloadController extends APIController
       return $this->response();
     }
 
+    public function getByParams($arrayCondition){
+      $result = Payload::where($arrayCondition)->get();
+      return sizeof($result) > 0 ? $result[0] : null;
+    }
+    
+
     public function preVerifyEmail(Request $request){
       $data = $request->all();
 
