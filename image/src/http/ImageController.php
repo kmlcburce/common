@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Increment\Common\Image\Models\Image;
 use App\Http\Controllers\APIController;
 use Illuminate\Support\Facades\Storage;
+use File;
 class ImageController extends APIController
 {
     function __construct(){
