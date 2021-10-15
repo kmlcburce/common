@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Facades\Route;
 $route = env('PACKAGE_ROUTE', '').'/images/';
 $controller = 'Increment\Common\Image\Http\ImageController@';
 Route::post($route.'create', $controller."create");
