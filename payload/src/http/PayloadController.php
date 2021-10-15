@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Common\Payload\Models\Payload;
 use Increment\Common\Image\Models\Image;
+use Mail;
 use Carbon\Carbon;
+use App\Mail\PreVerifyEmail;
 class PayloadController extends APIController
 {
     public $merchantController = 'Increment\Imarket\Merchant\Http\MerchantController';
@@ -263,4 +265,53 @@ class PayloadController extends APIController
     public function retrieveByParams($roomTypeId){
       return Payload::where('id', '=', $roomTypeId)->where('deleted_at', '=', null)->select('payload_value', 'id')->first();
     }
+
+    public function preVerifyEmail(Request $request){
+      $data = $request->all();
+
+      if($data['email'] == null){
+          $this->response['error'] = 'Empty email address';
+          return $this->response();
+      }
+
+      $checkIfExist = app('Increment\Common\Payload\Http\PayloadController')->getByParams(array(
+          array('payload_value', '=', $data['email']),
+          array('payload', '=', 'pre_register')
+      ));
+
+      $checkIfAccountExist = app('Increment\Account\Http\AccountController')->retrieveByEmail($data['email']);
+
+      if($checkIfExist == null && $checkIfAccountExist == null){
+          // check new payload
+          $code = $this->generatePayloadCode($data['email']);
+          Payload::insert(array(
+              'account_id' => 1,
+              'payload' => 'pre_register',
+              'payload_value' => $data['email'],
+              'category' => $code,
+              'created_at' => Carbon::now()
+          ));
+          if(env('EMAIL_STATUS') == false){
+              $this->response['data'] = true;
+          }else{
+              Mail::to($data['email'])->send(new PreVerifyEmail($data['email'], $code, $this->response['timezone']));
+          }
+          $this->response['data'] = true;
+      }else{
+          $this->response['error'] = 'Email address is already existed.';
+      }
+      return $this->response();
+    }
+
+    public function generatePayloadCode($email){
+      $code = substr(str_shuffle('0123456789'), 0, 6);
+      $codeExist = Payload::where('category', '=', $code)->where('payload_value', '=', $email)->where('payload', '=', 'pre_register')->get();
+      if (sizeof($codeExist) > 0) {
+        $this->generatePayloadCode($email);
+      } else {
+        return $code;
+      }
+    }
+
+
 }
