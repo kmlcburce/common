@@ -18,7 +18,7 @@ class CommentReplyController extends APIController
       $this->model = new CommentReply();
       $this->insertDB($data);
       if($this->response['data']){
-        $data['topic'] = 'ticket-comment';
+        $data['topic'] = 'comment-reply';
         $data['account'] = $this->retrieveAccountDetailsOnRequests($data['account_id']);
         $data['created_at_human'] = Carbon::now()->copy()->diffForHumans();
         Notifications::dispatch('comment-reply', $data);
