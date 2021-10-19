@@ -23,5 +23,6 @@ class CommentReplyController extends APIController
         $data['created_at_human'] = Carbon::now()->copy()->diffForHumans();
         Notifications::dispatch('comment-reply', $data);
       }
+      return $this->response();
     }
 }
