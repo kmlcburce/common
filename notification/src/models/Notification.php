@@ -4,7 +4,7 @@ namespace Increment\Common\Notification\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\APIModel;
-
+use Carbon\Carbon;
 class Notification extends APIModel
 {
     protected $table = 'notifications';
@@ -17,6 +17,11 @@ class Notification extends APIModel
     public function getToAttribute($value){
       return intval($value);
     }
+
+    // public function getCreatedAtAttribute($value){
+    //   return Carbon::createFromFormat('Y-m-d H:i:s', $value)->format('Y-m-d H:i:s');
+    //   // return $value;
+    // }
 
 }
 

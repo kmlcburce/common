@@ -8,6 +8,7 @@ use Increment\Account\Models\Account;
 use Increment\Common\Notification\Models\Notification;
 use App\Http\Controllers\APIController;
 use App\Jobs\Notifications;
+use App\Synqt;
 class NotificationController extends APIController
 {
     function __construct(){
@@ -30,15 +31,22 @@ class NotificationController extends APIController
         $i = 0;
         foreach ($result as $key) {
           $result[$i]['reservee'] = $this->retrieveNameOnly($result[$i]['from']);
-          $result[$i]['synqt'] = app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value']);
-          $result[$i]['location'] = Location::where('id', '=', app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value'])[0]->location_id)->get();
-          $result[$i]['merchant'] = app($merchantClass)->getByParams('id', $result[$i]['location'][0]->merchant_id);
+          $result[$i]['synqt'] = $this->retrieveOneSynqt('id', $result[$i]['payload_value']);
+          $result[$i]['location'] = Location::where('id', '=', app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value'])[0]->location_id)->select('route')->get();
+          // $result[$i]['merchant'] = app($merchantClass)->getByParams('id', $result[$i]['location'][0]->merchant_id);
           $result[$i]['members'] = app('Increment\Messenger\Http\MessengerGroupController')->getMembersByParams('payload', $result[$i]['payload_value'], ['id', 'title']);
           $i++;
         }
         $this->response['data'] = $result;
       }
       return $this->response();
+    }
+
+    public function retrieveOneSynqt($column, $value)
+    {
+        $result = Synqt::where($column, '=', $value)->where('deleted_at', '=', null)->select('id', 'date')->get();
+        $result[0]['date_at_human'] = Carbon::createFromFormat('Y-m-d', $result[0]['date'])->copy()->tz($this->response['timezone'])->format('F j, Y');
+        return sizeof($result) > 0 ? $result : [];
     }
 
     public function retrieve(Request $request){
@@ -111,14 +119,14 @@ class NotificationController extends APIController
       return array($result);
     }
     
-
+    
     public function manageResult($result, $notify = false){
-        $this->localization();
-        // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
-        $response = null;
-        $temp = Carbon::parse($result['created_at']);
-        $result['created_at'] = $temp->format('Y-m-d H:i:s');
-        $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
+      $this->localization();
+      // $account = $this->retrieveAccountDetailsOnRequests($result['from']);
+      $response = null;
+      // $temp = Carbon::parse($result['created_at']);
+      // $result['created_at'] = $temp->format('Y-m-d H:i:s');
+      $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
 
         if($result['payload'] == 'Peer Request'){
           $response = array(
@@ -162,6 +170,22 @@ class NotificationController extends APIController
             // 'from'    => $result['from'],
             'to'      => $result['to']
           );
+        }else if($result['payload'] == 'thread'){
+          $response = array(
+            'message' => "Your proposal was accepted",
+            'title'   => "New Thread Message",
+            'type'    => 'notifications',
+            'topic'   => 'notifications',
+            'payload'    => $result['payload'],
+            'payload_value' => $result['payload_value'],
+            'route'   => $result['route'],
+            'date'    => $result['created_at_human'],
+            'id'      => $result['id'],
+            // 'from'    => $result['from'],
+            'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['currency']),
+            'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['amount']),
+            'to'      => $result['to']
+          );
         }else{
           $response = array(
             'message' => 'View Activity',
@@ -192,8 +216,9 @@ class NotificationController extends APIController
       $tempCode =  strrpos($result['route'], '/');
       $code = substr($result['route'], $tempCode + 1);
       $response = null;
-      $temp = Carbon::parse($result['created_at']);
-      $result['created_at'] = $temp->format('Y-m-d H:i:s');
+      // dd($result['created_at']);
+      // $temp = Carbon::parse($result['created_at']);
+      // $result['created_at'] = $temp->format('Y-m-d H:i:s');
       $result['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result['created_at'])->copy()->tz($this->response['timezone'])->format('F j, Y h:i A');
 
       if($result['payload'] == 'Peer Request'){
@@ -208,7 +233,7 @@ class NotificationController extends APIController
           'date'    => $result['created_at_human'],
           'id'      => $result['id'],
           // 'from'    => $result['from'],
-          'request' => app('App\Http\Controllers\RequestMoneyController')->retrieveByPayloadValue($result['payload_value']),
+          // 'request' => app('App\Http\Controllers\RequestMoneyController')->retrieveByPayloadValue($result['payload_value']),
           'to'      => $result['to']
         );
       }else if($result['payload'] == 'thread'){
@@ -223,8 +248,9 @@ class NotificationController extends APIController
           'date'    => $result['created_at_human'],
           'id'      => $result['id'],
           // 'from'    => $result['from'],
-          'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['currency']),
-          'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['amount']),
+          // 'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['currency']),
+          // 'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['amount']),
+          // 'request' => app('App\Http\Controllers\RequestMoneyController')->retrieveByPayloadValue($result['payload_value']),
           'to'      => $result['to']
         );
       }else if($result['payload'] == 'device'){
@@ -302,7 +328,7 @@ class NotificationController extends APIController
       $result = Notification::where('id', '=', $model->id)->get();
 
       $parameter['to'] = $device;
-      // $this->manageResult($result[0], true);
+      $this->manageResult($result[0], true);
       return true;
     }
 }
