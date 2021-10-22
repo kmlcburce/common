@@ -12,9 +12,6 @@ class ImageController extends APIController
       $this->notRequired = array(
         'category'
       );
-      if($this->checkAuthenticatedUser() == false){
-        return $this->response();
-      }
       $this->model = new Image();
     }
 
