@@ -12,28 +12,24 @@ class SMSController extends APIController
 {
   public function sendFromRequest(Request $request){
     $data = $request->all();
-    $accountID = env("TWILIO_SID");
-    $authToken = env("TWILIO_AUTH_TOKEN");
     $sender = env("TWILIO_NUMBER");
     $callBackUrl = env('TWILIO_CALLBACK_URL');
-    $client = new Client($accountID, $this->authToken);
+    $client = new Client(env("TWILIO_SID"), env("TWILIO_AUTH_TOKEN"));
     return $client->messages->create($data['receiver'], [
-      'from' => $data['sender'],
+      'from' => $sender,
       'body' => $data['messages'],
-      'statusCallback' => env('TWILIO_CALLBACK_URL')
+      'statusCallback' => $callBackUrl
     ]);
   }
 
   public function sendDirect($data){
-    $accountID = env("TWILIO_SID");
-    $authToken = env("TWILIO_AUTH_TOKEN");
     $sender = env("TWILIO_NUMBER");
     $callBackUrl = env('TWILIO_CALLBACK_URL');
-    $client = new Client($accountID, $this->authToken);
+    $client = new Client(env("TWILIO_SID"), env("TWILIO_AUTH_TOKEN"));
     return $client->messages->create($data['receiver'], [
-      'from' => $data['sender'],
+      'from' => $sender,
       'body' => $data['messages'],
-      'statusCallback' => env('TWILIO_CALLBACK_URL')
+      'statusCallback' => $callBackUrl
     ]);
   }
 }
