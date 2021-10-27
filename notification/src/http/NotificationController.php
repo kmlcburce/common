@@ -238,7 +238,7 @@ class NotificationController extends APIController
           'date'    => $result['created_at_human'],
           'id'      => $result['id'],
           // 'from'    => $result['from'],
-          'request' => app('App\Http\Controllers\RequestMoneyController')->retrieveByPayloadValue($result['payload_value']),
+          // 'request' => app('App\Http\Controllers\RequestMoneyController')->retrieveByPayloadValue($result['payload_value']),
           'to'      => $result['to']
         );
       }else if($result['payload'] == 'thread'){
@@ -253,8 +253,9 @@ class NotificationController extends APIController
           'date'    => $result['created_at_human'],
           'id'      => $result['id'],
           // 'from'    => $result['from'],
-          'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['currency']),
-          'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['amount']),
+          // 'currency' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['currency']),
+          // 'amount' => app('App\Http\Controllers\RequestMoneyController')->getByParamsWithColumns('code' ,$code, ['amount']),
+          // 'request' => app('App\Http\Controllers\RequestMoneyController')->retrieveByPayloadValue($result['payload_value']),
           'to'      => $result['to']
         );
       }else if($result['payload'] == 'device'){
