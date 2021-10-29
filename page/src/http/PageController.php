@@ -12,6 +12,7 @@ class PageController extends APIController
   function __construct()
   {
     $this->model = new Page();
+    $this->notRequired = array('additional_informations');
   }
 
   public function create(Request $request){
