@@ -19,6 +19,7 @@ class PageController extends APIController
     $data = $request->all();
     $data['code'] = $this->generateCode();
     $this->model = new Page();
+    $data['status'] = 'pending';
     $res = $this->insertDB($data);
     $this->response['data'] = $res;
     return $this->response();
