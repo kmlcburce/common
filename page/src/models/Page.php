@@ -6,5 +6,5 @@ use App\APIModel;
 class Page extends APIModel
 {
   protected $table = 'pages';
-  protected $fillable = ['code', 'account_id', 'title', 'address', 'category'];
+  protected $fillable = ['code', 'account_id', 'title', 'address', 'category', 'category', 'additional_informations', 'email', 'status'];
 }
