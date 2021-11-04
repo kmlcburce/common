@@ -6,6 +6,7 @@ Route::post($route.'create', $controller."create");
 Route::post($route.'create_with_notification', $controller."createWithNotification");
 Route::post($route.'retrieve', $controller."retrieve");
 Route::post($route.'retrieve_comments', $controller."retrieveComments");
+Route::post($route.'retrieve_comments_with_images', $controller."retrieveCommentsWithImages");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller."test");
