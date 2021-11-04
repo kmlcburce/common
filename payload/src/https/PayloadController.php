@@ -174,6 +174,6 @@ class PayloadController extends APIController
       ->get();
 
       $this->response['data'] = sizeof($res) > 0 ? $res : [];
-      return $this->response();
+      return $this->response['data'];
     }
 }
