@@ -22,23 +22,18 @@ class NotificationController extends APIController
 
       $synqtClass = 'App\Http\Controllers\SynqtController';
       $merchantClass = 'Increment\Imarket\Merchant\Http\MerchantController';
-      $data = $request->all();
-      // $this->model = new Notification();
-      // $this->retrieveDB($data);
-      // $result = $this->response['data'];
-      $con = $data['condition'];
-      $result = Notification::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
-      ->where('deleted_at', '=', null)
-      ->offset($data['offset'])
-      ->limit($data['limit'])
-      ->get();
 
+      $data = $request->all();
+      $this->model = new Notification();
+      $this->retrieveDB($data);
+      $result = $this->response['data'];
       if(sizeof($result) > 0){
         $i = 0;
         foreach ($result as $key) {
           $result[$i]['reservee'] = $this->retrieveNameOnly($result[$i]['from']);
           $result[$i]['synqt'] = $this->retrieveOneSynqt('id', $result[$i]['payload_value']);
           $result[$i]['location'] = Location::where('id', '=', app($synqtClass)->retrieveByParams('id', $result[$i]['payload_value'])[0]->location_id)->select('route')->get();
+          // $result[$i]['merchant'] = app($merchantClass)->getByParams('id', $result[$i]['location'][0]->merchant_id);
           $result[$i]['members'] = app('Increment\Messenger\Http\MessengerGroupController')->getMembersByParams('payload', $result[$i]['payload_value'], ['id', 'title']);
           $i++;
         }
