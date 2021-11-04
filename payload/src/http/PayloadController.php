@@ -312,12 +312,13 @@ class PayloadController extends APIController
         return $code;
       }
     }
-
-    public function retrieveSubscriptions(Request $request) {
+    
+    public function retrieveSubscriptions(Request $request){
       $data = $request->all();
-      $result = Payload::where('payload', '=', 'subscription')->get();
+      $con = $data['condition'];
+      $result = Payload::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])->get();
       if(sizeof($result) > 0){
-        for ($i=0; $i <= sizeof($result)-1 ; $i++) { 
+        for ($i=0; $i <= sizeof($result)-1; $i++) { 
           $item = $result[$i];
           $result[$i]['payload_value'] = json_decode($item['payload_value']);
         }
