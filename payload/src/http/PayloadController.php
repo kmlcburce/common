@@ -298,7 +298,23 @@ class PayloadController extends APIController
           }
           $this->response['data'] = true;
       }else{
+        if($checkIfAccountExist){
           $this->response['error'] = 'Email address is already existed.';
+        }else{
+          $code = $this->generatePayloadCode($data['email']);
+          $update = Payload::where('payload_value', '=', $data['email'])
+            ->where('payload', '=', 'pre_register')
+            ->update(array(
+              'category' => $code,
+              'updated_at' => Carbon::now()
+            ));
+          if(env('EMAIL_STATUS') == false){
+            $this->response['data'] = true;
+          }else{
+            Mail::to($data['email'])->send(new PreVerifyEmail($data['email'], $code, $this->response['timezone']));
+          }
+          $this->response['data'] = true;
+        }
       }
       return $this->response();
     }
@@ -313,5 +329,16 @@ class PayloadController extends APIController
       }
     }
 
-
+    public function retrieveSubscriptions(Request $request) {
+      $data = $request->all();
+      $result = Payload::where('payload', '=', 'subscription')->get();
+      if(sizeof($result) > 0){
+        for ($i=0; $i <= sizeof($result)-1 ; $i++) { 
+          $item = $result[$i];
+          $result[$i]['payload_value'] = json_decode($item['payload_value']);
+        }
+        $this->response['data'] = $result;
+      }
+      return $this->response();
+    }
 }
