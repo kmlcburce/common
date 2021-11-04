@@ -341,4 +341,12 @@ class PayloadController extends APIController
       }
       return $this->response();
     }
+
+    public function retrievePayloads($payload, $payloadValue) {
+      $data = $request->all();
+      $res = Payload::where('deleted_at', '=', null)->where($payload, '=', $payloadValue)->get();
+
+      $this->response['data'] = sizeof($res) > 0 ? $res : [];
+      return $this->response();
+    }
 }
