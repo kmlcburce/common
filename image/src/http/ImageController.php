@@ -6,15 +6,14 @@ use Illuminate\Http\Request;
 use Increment\Common\Image\Models\Image;
 use App\Http\Controllers\APIController;
 use Illuminate\Support\Facades\Storage;
+use File;
+use Response;
 class ImageController extends APIController
 {
     function __construct(){
       $this->notRequired = array(
         'category', 'payload', 'payload_value',
       );
-      if($this->checkAuthenticatedUser() == false){
-        return $this->response();
-      }
       $this->model = new Image();
     }
 
@@ -155,6 +154,38 @@ class ImageController extends APIController
       } else {
         return [];
       }
+    }
+
+    public function getImage($filename){
+      $path = storage_path('/app/images/' . $filename);
+
+      if (!File::exists($path)) {
+          abort(404);
+      }
+
+      $file = File::get($path);
+      $type = File::mimeType($path);
+
+      $response = Response::make($file, 200);
+      $response->header("Content-Type", $type);
+
+      return $response;
+    }
+
+    public function getFile($filename){
+      $path = storage_path('/app/files/' . $filename);
+
+      if (!File::exists($path)) {
+          abort(404);
+      }
+
+      $file = File::get($path);
+      $type = File::mimeType($path);
+
+      $response = Response::make($file, 200);
+      $response->header("Content-Type", $type);
+
+      return $response;  
     }
 
     // public function removeImages($)

@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\APIController;
 use Increment\Common\Payload\Models\Payload;
 use Increment\Common\Image\Models\Image;
+use Mail;
 use Carbon\Carbon;
+use App\Mail\PreVerifyEmail;
 class PayloadController extends APIController
 {
     public $merchantController = 'Increment\Imarket\Merchant\Http\MerchantController';
@@ -16,6 +18,12 @@ class PayloadController extends APIController
       }
       $this->model = new Payload();
       $this->notRequired = array('category');
+    }
+
+    public function createByParams($data){
+      $this->model = new Payload();
+      $this->insertDB($data);
+      return $this->response['data'];
     }
 
     public function createIndustry(Request $request){
@@ -256,5 +264,66 @@ class PayloadController extends APIController
     
     public function retrieveByParams($roomTypeId){
       return Payload::where('id', '=', $roomTypeId)->where('deleted_at', '=', null)->select('payload_value', 'id')->first();
+    }
+
+    public function preVerifyEmail(Request $request){
+      $data = $request->all();
+
+      if($data['email'] == null){
+          $this->response['error'] = 'Empty email address';
+          return $this->response();
+      }
+
+      $checkIfExist = app('Increment\Common\Payload\Http\PayloadController')->getByParams(array(
+          array('payload_value', '=', $data['email']),
+          array('payload', '=', 'pre_register')
+      ));
+
+      $checkIfAccountExist = app('Increment\Account\Http\AccountController')->retrieveByEmail($data['email']);
+
+      if($checkIfExist == null && $checkIfAccountExist == null){
+          // check new payload
+          $code = $this->generatePayloadCode($data['email']);
+          Payload::insert(array(
+              'account_id' => 1,
+              'payload' => 'pre_register',
+              'payload_value' => $data['email'],
+              'category' => $code,
+              'created_at' => Carbon::now()
+          ));
+          if(env('EMAIL_STATUS') == false){
+              $this->response['data'] = true;
+          }else{
+              Mail::to($data['email'])->send(new PreVerifyEmail($data['email'], $code, $this->response['timezone']));
+          }
+          $this->response['data'] = true;
+      }else{
+          $this->response['error'] = 'Email address is already existed.';
+      }
+      return $this->response();
+    }
+
+    public function generatePayloadCode($email){
+      $code = substr(str_shuffle('0123456789'), 0, 6);
+      $codeExist = Payload::where('category', '=', $code)->where('payload_value', '=', $email)->where('payload', '=', 'pre_register')->get();
+      if (sizeof($codeExist) > 0) {
+        $this->generatePayloadCode($email);
+      } else {
+        return $code;
+      }
+    }
+    
+    public function retrieveSubscriptions(Request $request){
+      $data = $request->all();
+      $con = $data['condition'];
+      $result = Payload::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])->get();
+      if(sizeof($result) > 0){
+        for ($i=0; $i <= sizeof($result)-1; $i++) { 
+          $item = $result[$i];
+          $result[$i]['payload_value'] = json_decode($item['payload_value']);
+        }
+        $this->response['data'] = $result;
+      }
+      return $this->response();
     }
 }
