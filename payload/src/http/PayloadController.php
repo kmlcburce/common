@@ -204,9 +204,9 @@ class PayloadController extends APIController
           for ($i=0; $i <= sizeof($data['images'])-1 ; $i++) { 
             $item = $data['images'][$i];
             $params = array(
-              'room_id' => $data['status'] === 'create' ? $res['id'] : $res,
+              'room_id' => $data['status'] === 'create' ? $res['id'] : $data['id'],
               'url' => $item['url'],
-              'status' => 'featured'
+              'status' => 'room_type'
             );
             app('Increment\Hotel\Room\Http\ProductImageController')->addImage($params);
           }
