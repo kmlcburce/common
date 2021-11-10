@@ -54,6 +54,25 @@ class CommentController extends APIController
       return $this->response();
     }
 
+    public function retrieveCommentsWithImages(Request $request){
+      $data = $request->all();
+      $this->retrieveDB($data);
+
+      $result = $this->response['data'];
+      if(sizeof($result) > 0){
+        $i = 0;
+        foreach ($result as $key) {
+          $this->response['data'][$i]['account'] = $this->retrieveAccountDetails($result[$i]['account_id']);
+          $this->response['data'][$i]['comment_replies'] = $this->getReplies($result[$i]['id']);
+          $this->response['data'][$i]['created_at_human'] = Carbon::createFromFormat('Y-m-d H:i:s', $result[$i]['created_at'])->copy()->tz($this->response['timezone'])->diffForHumans();
+          $this->response['data'][$i]['new_reply_flag'] = false;
+          $this->response['data'][$i]['images'] = app('Increment\Common\Payload\Http\PayloadController')->retrievePayloads('payload', 'comment_id', 'payload_value', $result[$i]['id']);
+          $i++;
+        }
+      }
+      return $this->response();
+    }
+
     public function retrieveComments(Request $request){
       $data = $request->all();
       $this->retrieveDB($data);

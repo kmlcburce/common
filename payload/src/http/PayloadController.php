@@ -204,9 +204,9 @@ class PayloadController extends APIController
           for ($i=0; $i <= sizeof($data['images'])-1 ; $i++) { 
             $item = $data['images'][$i];
             $params = array(
-              'room_id' => $data['status'] === 'create' ? $res['id'] : $res,
+              'room_id' => $data['status'] === 'create' ? $res['id'] : $data['id'],
               'url' => $item['url'],
-              'status' => 'featured'
+              'status' => 'room_type'
             );
             app('Increment\Hotel\Room\Http\ProductImageController')->addImage($params);
           }
@@ -298,7 +298,23 @@ class PayloadController extends APIController
           }
           $this->response['data'] = true;
       }else{
+        if($checkIfAccountExist){
           $this->response['error'] = 'Email address is already existed.';
+        }else{
+          $code = $this->generatePayloadCode($data['email']);
+          $update = Payload::where('payload_value', '=', $data['email'])
+            ->where('payload', '=', 'pre_register')
+            ->update(array(
+              'category' => $code,
+              'updated_at' => Carbon::now()
+            ));
+          if(env('EMAIL_STATUS') == false){
+            $this->response['data'] = true;
+          }else{
+            Mail::to($data['email'])->send(new PreVerifyEmail($data['email'], $code, $this->response['timezone']));
+          }
+          $this->response['data'] = true;
+        }
       }
       return $this->response();
     }
@@ -325,6 +341,33 @@ class PayloadController extends APIController
         }
         $this->response['data'] = $result;
       }
+      return $this->response();
+    }
+
+    public function retrieveWithValidation(Request $request){
+      $data = $request->all();
+      $con = $data['condition'];
+      $temp = Payload::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])->where('deleted_at', '=', null)->get();
+      $result = [];
+      if(sizeof($temp) > 0){
+        for ($i=0; $i <= sizeof($temp)-1 ; $i++) { 
+          $item = $temp[$i];
+          $addedCategoryPerRoom = app('Increment\Hotel\Room\Http\RoomController')->retrieveByCategory($item['id']);
+          $limitPerCategory = app('Increment\Hotel\Room\Http\AvailabilityController')->retrieveByPayloadPayloadValue('room_type', $item['id']);
+          if(sizeof($addedCategoryPerRoom) < (int)$limitPerCategory['limit']){
+            array_push($result, $item);
+          }
+        }
+        $this->response['data'] = $result;
+      }
+      return $this->response();
+    }
+    
+    public function retrievePayloads($payload, $payloadValue) {
+      $data = $request->all();
+      $res = Payload::where('deleted_at', '=', null)->where($payload, '=', $payloadValue)->get();
+
+      $this->response['data'] = sizeof($res) > 0 ? $res : [];
       return $this->response();
     }
 }

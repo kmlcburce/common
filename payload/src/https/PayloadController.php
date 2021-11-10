@@ -166,4 +166,14 @@ class PayloadController extends APIController
         return $code;
       }
     }
+
+    public function retrievePayloads($payload, $payloadValue, $payload1, $payloadValue1) {
+      $res = Payload::where('deleted_at', '=', null)
+      ->where($payload, '=', $payloadValue)
+      ->where($payload1, '=', $payloadValue1)
+      ->get();
+
+      $this->response['data'] = sizeof($res) > 0 ? $res : [];
+      return $this->response['data'];
+    }
 }
