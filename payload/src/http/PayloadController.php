@@ -332,7 +332,8 @@ class PayloadController extends APIController
     public function retrieveSubscriptions(Request $request){
       $data = $request->all();
       $con = $data['condition'];
-      $result = Payload::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])->get();
+      $limit = isset($data['limit']) ? $data['limit'] : null;
+      $result = Payload::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])->limit($limit)->get();
       if(sizeof($result) > 0){
         for ($i=0; $i <= sizeof($result)-1; $i++) { 
           $item = $result[$i];
