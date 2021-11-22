@@ -14,6 +14,24 @@ class CacheController extends APIController
         return $res;
     }
 
+    public function insertToLast($key, $value){
+        $data = [];
+        $data = Cache::get($key);
+        $data[] = $value;
+        return $this->insert($key, $data);
+    }
+
+    public function insertToFirst($key, $value){
+        $data = [];
+        $data = Cache::get($key);
+        if(sizeof($data) > 0){
+            array_unshift($data, $value);
+        }else{
+            $data[] = $value;
+        }
+        return $this->insert($key, $data);
+    }
+
     public function insertArray($keys, $value){
         $array = array();
         array_push($array, $value);
