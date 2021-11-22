@@ -19,6 +19,12 @@ class PayloadController extends APIController
       $this->notRequired = array('category');
     }
 
+    public function createByParams($data){
+      $this->model = new Payload();
+      $this->insertDB($data);
+      return $this->response['data'];
+    }
+
     public function uploadValidId(Request $request){
       $data = $request->all();
       $payloadValue = array();

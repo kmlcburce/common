@@ -151,6 +151,7 @@ class ImageController extends APIController
       $data = $request->all();
       $date = Carbon::now()->toDateString();
       $time = str_replace(':', '_',Carbon::now()->toTimeString());
+      $images = [];
       foreach ($data['images'] as $key) {
         $filename = $data['account_id'].'_'.$date.'_'.$key['file_url'];
         $image = base64_decode($key['file_base64']);
@@ -162,8 +163,11 @@ class ImageController extends APIController
           'payload_value' =>$data['payload_value'],
           'category' => $url
         );
-        app('Increment\Common\Payload\Http\PayloadController')->createByParams($params);
+        $res = app('Increment\Common\Payload\Http\PayloadController')->createByParams($params);
+        $params['id'] = $res['data'];
+        array_push($images, $params);
       }
+      $this->response['data'] = $images;
       return $this->response();
     }
 
