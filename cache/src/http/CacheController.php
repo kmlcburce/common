@@ -10,7 +10,14 @@ use Carbon\Carbon;
 class CacheController extends APIController
 {
     public function insert($key, $value){
-        $res = Cache::put($key, $value);
+        $previousData = Cache::get($key);
+
+        if($previousData && sizeof($previousData) > 0){
+            $previousData[] = $value;
+            $res = Cache::put($key, $value);
+        }else{
+            $res = Cache::put($key, $value);
+        }
         return $res;
     }
 
@@ -51,8 +58,6 @@ class CacheController extends APIController
 
     public function retrieve($key, $offset = null, $limit = null){
         $data = Cache::get($key);
-
-
         if($offset && $limit && $data && sizeof($data) > 0){
             $size = sizeof($data);
 
