@@ -9,6 +9,14 @@ use Carbon\Carbon;
 
 class CacheController extends APIController
 {
+
+    public function retrieveCondition($result, $offset){
+        if($result && sizeof($result) > 0 && $offset >= sizeof($result)){
+            return true;
+        }
+        return false;
+    }
+    
     public function insert($key, $value){
         $previousData = Cache::get($key);
 
@@ -59,6 +67,8 @@ class CacheController extends APIController
     public function retrieve($key, $offset = null, $limit = null){
         $data = Cache::get($key);
         if($offset && $limit && $data && sizeof($data) > 0){
+            $offset = intval($offset);
+            $limit = intval($limit);
             $size = sizeof($data);
 
             if($limit >= $size){
