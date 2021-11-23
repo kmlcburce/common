@@ -71,6 +71,31 @@ class CacheController extends APIController
         
     }
 
+    public function retrieveFromRequest(Request $request){
+        $data = $request->all();
+        $limit = intval($data['limit']);
+        $offset = intval($data['offset']);
+        $data = Cache::get($data['key']);
+
+
+        if($offset && $limit && $data && sizeof($data) > 0){
+            $size = sizeof($data);
+
+            if($limit >= $size){
+                return $data;
+            }else{
+                if($offset > $size){
+                    return [];
+                }else{
+                    return array_slice($data, $offset, $limit);
+                }
+            }
+        }else{
+            return $data;
+        }
+        
+    }
+
     public function checkIfExist($key){
         return Cache::get($key);
     }
