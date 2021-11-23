@@ -16,7 +16,7 @@ class CacheController extends APIController
         }
         return false;
     }
-    
+
     public function insert($key, $value){
         $previousData = Cache::get($key);
 
@@ -39,7 +39,7 @@ class CacheController extends APIController
     public function insertToFirst($key, $value){
         $data = [];
         $data = Cache::get($key);
-        if(sizeof($data) > 0){
+        if($data && sizeof($data) > 0){
             array_unshift($data, $value);
         }else{
             $data[] = $value;
