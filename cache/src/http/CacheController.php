@@ -59,10 +59,10 @@ class CacheController extends APIController
             if($limit >= $size){
                 return $data;
             }else{
-                if($limit > 0){
-                    return array_slice($data, $offset, $limit);
+                if($offset > $size){
+                    return [];
                 }else{
-                    return array_slice($data, 0, $limit);
+                    return array_slice($data, $offset, $limit);
                 }
             }
         }else{
