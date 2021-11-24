@@ -182,22 +182,17 @@ class MyCircleController extends APIController
          }
          $i++;
       }
-      $final = array();
       if (sizeof($result) > 0) {
          $j = 0;
          foreach ($result as $key) {
-            $isMerchant =  app('Increment\Imarket\Merchant\Http\MerchantController')->getByParams('account_id', $result[$j]['id']);
-            if($isMerchant === null) {
-               $result[$j]['status'] = $key['status'];
-               $result[$j]['account_id'] =  $result[$j]['id'];
-               $result[$j]['account'] = $this->retrieveDetails($result[$j]['id']);
-               $result[$j]['rating'] = app($this->ratingClass)->getRatingByPayload('profile',  $result[$j]['id']);
-               array_push($final, $result[$j]);
-            }
+            $result[$j]['status'] = $key['status'];
+            $result[$j]['account_id'] =  $result[$j]['id'];
+            $result[$j]['account'] = $this->retrieveDetails($result[$j]['id']);
+            $result[$j]['rating'] = app($this->ratingClass)->getRatingByPayload('profile',  $result[$j]['id']);
             $j++;
          }
+         $this->response['data'] = $result;
       }
-      $this->response['data'] = $final;
       return $this->response();
    }
 
