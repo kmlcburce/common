@@ -196,8 +196,8 @@ class MyCircleController extends APIController
             }
             $j++;
          }
-         $this->response['data'] = $final;
       }
+      $this->response['data'] = $final;
       return $this->response();
    }
 
