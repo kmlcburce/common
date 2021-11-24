@@ -187,7 +187,7 @@ class MyCircleController extends APIController
          $j = 0;
          foreach ($result as $key) {
             $isMerchant =  app('Increment\Imarket\Merchant\Http\MerchantController')->getByParams('account_id', $result[$j]['id']);
-            if($isMerchant == null) {
+            if($isMerchant === null) {
                $result[$j]['status'] = $key['status'];
                $result[$j]['account_id'] =  $result[$j]['id'];
                $result[$j]['account'] = $this->retrieveDetails($result[$j]['id']);
