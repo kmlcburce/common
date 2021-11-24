@@ -114,4 +114,8 @@ class CacheController extends APIController
     public function checkIfExist($key){
         return Cache::get($key);
     }
+
+    public function delete($key){
+        return Cache::forget($key);
+    }
 }
