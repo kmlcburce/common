@@ -26,7 +26,7 @@ class PayloadController extends APIController
       return $this->response['data'];
     }
 
-    public function createIndustry(Request $request){
+    public function createsIndustry(Request $request){
       $data = $request->all();
       $con = $this->checkValidIndustry($data['account_id']);
       if($con === false){
