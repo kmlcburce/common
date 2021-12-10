@@ -215,5 +215,19 @@ class PayloadController extends APIController
         return false;
       }
     }
+
+    public function retrieveStorePayments(Request $request){
+      $data = $request->all();
+      $result = Payload::where('account_id', '=', $data['account_id'])->where('payload', '=', 'Branch')->get();
+
+      if(sizeof($result) > 0){
+        for($i=0; $i < sizeof($result); $i++){
+          $item = $result[$i];
+          $result[$i]['payload_value'] = json_decode($item['payload_value']);
+        }
+      }
+      $this->response['data'] = $result;
+      return $this->response();
+    }
     
 }
