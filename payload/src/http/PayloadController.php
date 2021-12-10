@@ -365,12 +365,14 @@ class PayloadController extends APIController
       return $this->response();
     }
     
-    public function retrievePayloads($payload, $payloadValue) {
-      $data = $request->all();
-      $res = Payload::where('deleted_at', '=', null)->where($payload, '=', $payloadValue)->get();
+    public function retrievePayloads($payload, $payloadValue, $payload1, $payloadValue1) {
+      $res = Payload::where('deleted_at', '=', null)
+      ->where($payload, '=', $payloadValue)
+      ->where($payload1, '=', $payloadValue1)
+      ->get();
 
       $this->response['data'] = sizeof($res) > 0 ? $res : [];
-      return $this->response();
+      return $this->response['data'];
     }
 
     public function retrieveStorePayments(Request $request){
