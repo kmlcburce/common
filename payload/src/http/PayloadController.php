@@ -187,33 +187,40 @@ class PayloadController extends APIController
     
     public function createWithImages(Request $request){
       $data = $request->all();
-      $payload = array(
-        'account_id'    => $data['account_id'],
-        'payload' => $data['payload'],
-        'category' => $data['category'],
-        'payload_value' => $data['payload_value'],
-      );
-      if($data['status'] === 'create'){
-        $res = Payload::create($payload);
-      }else if($data['status'] === 'update'){
-        $payload['updated_at'] = Carbon::now();
-        $res = Payload::where('id', '=', $data['id'])->update($payload);
-      }
-      if(isset($data['images'])){
-        if(sizeof($data['images']) > 0){
-          for ($i=0; $i <= sizeof($data['images'])-1 ; $i++) { 
-            $item = $data['images'][$i];
-            $params = array(
-              'room_id' => $data['status'] === 'create' ? $res['id'] : $data['id'],
-              'url' => $item['url'],
-              'status' => 'room_type'
-            );
-            app('Increment\Hotel\Room\Http\ProductImageController')->addImage($params);
+      $exist = Payload::where('paylaoad', '=', $data['payload'])->get();
+      if(sizeof($data['payload']) > 0){
+        $this->response['error'] = 'Already Existed';
+        $this->response['data'] = null;
+        return $this->response();
+      }else{
+        $payload = array(
+          'account_id'    => $data['account_id'],
+          'payload' => $data['payload'],
+          'category' => $data['category'],
+          'payload_value' => $data['payload_value'],
+        );
+        if($data['status'] === 'create'){
+          $res = Payload::create($payload);
+        }else if($data['status'] === 'update'){
+          $payload['updated_at'] = Carbon::now();
+          $res = Payload::where('id', '=', $data['id'])->update($payload);
+        }
+        if(isset($data['images'])){
+          if(sizeof($data['images']) > 0){
+            for ($i=0; $i <= sizeof($data['images'])-1 ; $i++) { 
+              $item = $data['images'][$i];
+              $params = array(
+                'room_id' => $data['status'] === 'create' ? $res['id'] : $data['id'],
+                'url' => $item['url'],
+                'status' => 'room_type'
+              );
+              app('Increment\Hotel\Room\Http\ProductImageController')->addImage($params);
+            }
           }
         }
+        $this->response['data'] = $res;
+        return $this->response();
       }
-      $this->response['data'] = $res;
-      return $this->response();
     }
 
     public function retrieveWithImage(Request $request){
