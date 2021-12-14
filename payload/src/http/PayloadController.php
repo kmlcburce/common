@@ -26,7 +26,7 @@ class PayloadController extends APIController
       return $this->response['data'];
     }
 
-    public function createIndustry(Request $request){
+    public function createsIndustry(Request $request){
       $data = $request->all();
       $con = $this->checkValidIndustry($data['account_id']);
       if($con === false){
@@ -187,33 +187,40 @@ class PayloadController extends APIController
     
     public function createWithImages(Request $request){
       $data = $request->all();
-      $payload = array(
-        'account_id'    => $data['account_id'],
-        'payload' => $data['payload'],
-        'category' => $data['category'],
-        'payload_value' => $data['payload_value'],
-      );
-      if($data['status'] === 'create'){
-        $res = Payload::create($payload);
-      }else if($data['status'] === 'update'){
-        $payload['updated_at'] = Carbon::now();
-        $res = Payload::where('id', '=', $data['id'])->update($payload);
-      }
-      if(isset($data['images'])){
-        if(sizeof($data['images']) > 0){
-          for ($i=0; $i <= sizeof($data['images'])-1 ; $i++) { 
-            $item = $data['images'][$i];
-            $params = array(
-              'room_id' => $data['status'] === 'create' ? $res['id'] : $data['id'],
-              'url' => $item['url'],
-              'status' => 'room_type'
-            );
-            app('Increment\Hotel\Room\Http\ProductImageController')->addImage($params);
+      $exist = Payload::where('paylaoad', '=', $data['payload'])->get();
+      if(sizeof($data['payload']) > 0){
+        $this->response['error'] = 'Already Existed';
+        $this->response['data'] = null;
+        return $this->response();
+      }else{
+        $payload = array(
+          'account_id'    => $data['account_id'],
+          'payload' => $data['payload'],
+          'category' => $data['category'],
+          'payload_value' => $data['payload_value'],
+        );
+        if($data['status'] === 'create'){
+          $res = Payload::create($payload);
+        }else if($data['status'] === 'update'){
+          $payload['updated_at'] = Carbon::now();
+          $res = Payload::where('id', '=', $data['id'])->update($payload);
+        }
+        if(isset($data['images'])){
+          if(sizeof($data['images']) > 0){
+            for ($i=0; $i <= sizeof($data['images'])-1 ; $i++) { 
+              $item = $data['images'][$i];
+              $params = array(
+                'room_id' => $data['status'] === 'create' ? $res['id'] : $data['id'],
+                'url' => $item['url'],
+                'status' => 'room_type'
+              );
+              app('Increment\Hotel\Room\Http\ProductImageController')->addImage($params);
+            }
           }
         }
+        $this->response['data'] = $res;
+        return $this->response();
       }
-      $this->response['data'] = $res;
-      return $this->response();
     }
 
     public function retrieveWithImage(Request $request){
@@ -234,7 +241,7 @@ class PayloadController extends APIController
       $this->response['data'] = $res;
       return $this->response();
     }
-
+    
     public function retrieveById(Request $request){
       $data = $request->all();
       $res = Payload::where('id', $data['id'])->first();
@@ -365,11 +372,27 @@ class PayloadController extends APIController
       return $this->response();
     }
     
-    public function retrievePayloads($payload, $payloadValue) {
-      $data = $request->all();
-      $res = Payload::where('deleted_at', '=', null)->where($payload, '=', $payloadValue)->get();
+    public function retrievePayloads($payload, $payloadValue, $payload1, $payloadValue1) {
+      $res = Payload::where('deleted_at', '=', null)
+      ->where($payload, '=', $payloadValue)
+      ->where($payload1, '=', $payloadValue1)
+      ->get();
 
       $this->response['data'] = sizeof($res) > 0 ? $res : [];
+      return $this->response['data'];
+    }
+
+    public function retrieveStorePayments(Request $request){
+      $data = $request->all();
+      $result = Payload::where('account_id', '=', $data['account_id'])->where('payload', '=', 'Branch')->get();
+
+      if(sizeof($result) > 0){
+        for($i=0; $i < sizeof($result); $i++){
+          $item = $result[$i];
+          $result[$i]['payload_value'] = json_decode($item['payload_value']);
+        }
+      }
+      $this->response['data'] = $result;
       return $this->response();
     }
 }
