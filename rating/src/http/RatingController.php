@@ -94,7 +94,7 @@ class RatingController extends APIController
       $key = 'ratings_'.$payload.'_'.$payloadValue;
       $result = app($this->cacheController)->retrieve($key, null, null);
 
-      if(app($this->cacheController)->retrieveCondition($result, $offset) == true){
+      if(app($this->cacheController)->retrieveCondition($result, 0) == true){
         return $result;
       }else{
         $rating = Rating::where('payload', '=', $payload)->where('payload_value', '=', $payloadValue)->get();
