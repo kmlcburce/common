@@ -11,16 +11,22 @@ class SMSController extends APIController
 {
 
   public $response = null;
-  public $baseUrl = 'https://api.m360.com.ph/v3/api/pin/send';
+  public $baseUrl = 'https://api.m360.com.ph/v3/api/broadcast';
+  public $baseUrlOTP = 'https://api.m360.com.ph/v3/api/pin/send';
 
   public function send(Request $request){
     $data = $request->all();
-    $this->curl('https://api.m360.com.ph/v3/api/pin/send', $data);
+    $this->curl($this->baseUrl, $data);
     return response()->json(json_decode($this->response));
   }
 
   public function sendDirect($params){
     $this->curl($this->baseUrl, $params);
+    return response()->json(json_decode($this->response));
+  }
+
+  public function otp($params){
+    $this->curl($this->baseUrlOTP, $params);
     return response()->json(json_decode($this->response));
   }
 
