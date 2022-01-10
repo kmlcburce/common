@@ -198,7 +198,7 @@ class PayloadController extends APIController
           'payload' => $data['payload'],
           'category' => $data['category'],
           'payload_value' => $data['payload_value'],
-          'details' => $data['details']
+          'details' => isset($data['details']) ? $data['details'] : null
         );
         if($data['status'] === 'create'){
           $res = Payload::create($payload);
