@@ -187,7 +187,7 @@ class PayloadController extends APIController
     
     public function createWithImages(Request $request){
       $data = $request->all();
-      $exist = Payload::where('payload_value', '=', $data['payload_value'])->get();
+      $exist = Payload::whereRaw("BINARY `payload_value` = ?", [$data['payload_value']])->get();
       if(sizeof($exist) > 0 && $data['status'] === 'create'){
         $this->response['error'] = 'Already Existed';
         $this->response['data'] = null;
@@ -233,6 +233,12 @@ class PayloadController extends APIController
         ->offset($data['offset'])->limit($data['limit'])
         ->orderBy(array_keys($data['sort'])[0], array_values($data['sort'])[0])
         ->get();
+      
+      $size = Payload::where($con[0]['column'], $con[0]['clause'], $con[0]['value'])
+        ->where('deleted_at', '=', null)
+        ->where('payload', '=', $data['payload'])
+        ->get();
+
       if(sizeof($res) > 0){
         for ($i=0; $i <= sizeof($res)-1; $i++) {
           $item = $res[$i];
@@ -240,6 +246,7 @@ class PayloadController extends APIController
         }
       }
       $this->response['data'] = $res;
+      $this->response['size'] = sizeOf($size);
       return $this->response();
     }
     
