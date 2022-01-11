@@ -21,12 +21,15 @@ class SMSController extends APIController
   }
 
   public function sendDirect($data, $returnFlag = null){
+    $pin = 123123;
+    $validity = 2;
+    $refCode = 123456;
     $params = array(
       "username" => env('SMS_USERNAME'),
       "password" => env('SMS_PASSWORD'),
       "shortcode_mask" => env('SMS_SENDER_ID'),
       "msisdn" => $data['msisdn'],
-      "content" => $data['content'],
+      "content" => "Your One-Time-Pin is ${pin} and valid for ${validity} minutes. Do not share with others. ${refCode}",
       "minute_validity" => 2
     );
     $this->curl($this->baseUrlOTP, $params);
