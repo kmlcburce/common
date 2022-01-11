@@ -269,12 +269,8 @@ class PayloadController extends APIController
       return $this->response();
     }
 
-    public function retrieveAll(Request $request){
-      $data = $request->all();
-      $res = Payload::where('deleted_at', '=', null)->where('payload', '=', 'room_type')->get(['payload_value', 'id']);
-
-      $this->response['data'] = $res;
-      return $this->response();
+    public function retrieveAll(){
+      return Payload::where('deleted_at', '=', null)->where('payload', '=', 'room_type')->get(['payload_value', 'id']);
     }
     
     public function retrieveByParams($roomTypeId){
