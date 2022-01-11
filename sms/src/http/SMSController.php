@@ -29,10 +29,10 @@ class SMSController extends APIController
       "password" => env('SMS_PASSWORD'),
       "shortcode_mask" => env('SMS_SENDER_ID'),
       "msisdn" => $data['msisdn'],
-      "content" => "Your One-Time-Pin is ${pin} and valid for ${validity} minutes. Do not share with others. ${refCode}",
+      "content" => "OTP: ".$pin." and valid for 2 minutes. Do not share with others.",
       "minute_validity" => 2
     );
-    $this->curl($this->baseUrlOTP, $params);
+    $this->curl($this->baseUrl, $params);
     if($returnFlag != null){
       return response()->json(json_decode($this->response));
     }
