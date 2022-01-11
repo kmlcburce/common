@@ -26,7 +26,7 @@ class PayloadController extends APIController
       return $this->response['data'];
     }
 
-    public function createIndustry(Request $request){
+    public function createsIndustry(Request $request){
       $data = $request->all();
       $con = $this->checkValidIndustry($data['account_id']);
       if($con === false){
@@ -249,7 +249,7 @@ class PayloadController extends APIController
       $this->response['size'] = sizeOf($size);
       return $this->response();
     }
-
+    
     public function retrieveById(Request $request){
       $data = $request->all();
       $res = Payload::where('id', $data['id'])->first();
@@ -376,7 +376,27 @@ class PayloadController extends APIController
       return $this->response();
     }
     
-    public function retrievePayloads($payload, $payloadValue) {
-      return Payload::where('deleted_at', '=', null)->where($payload, '=', $payloadValue)->get();
+    public function retrievePayloads($payload, $payloadValue, $payload1, $payloadValue1) {
+      $res = Payload::where('deleted_at', '=', null)
+      ->where($payload, '=', $payloadValue)
+      ->where($payload1, '=', $payloadValue1)
+      ->get();
+
+      $this->response['data'] = sizeof($res) > 0 ? $res : [];
+      return $this->response['data'];
+    }
+
+    public function retrieveStorePayments(Request $request){
+      $data = $request->all();
+      $result = Payload::where('account_id', '=', $data['account_id'])->where('payload', '=', 'Branch')->get();
+
+      if(sizeof($result) > 0){
+        for($i=0; $i < sizeof($result); $i++){
+          $item = $result[$i];
+          $result[$i]['payload_value'] = json_decode($item['payload_value']);
+        }
+      }
+      $this->response['data'] = $result;
+      return $this->response();
     }
 }
