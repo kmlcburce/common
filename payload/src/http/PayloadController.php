@@ -188,6 +188,7 @@ class PayloadController extends APIController
     public function createWithImages(Request $request){
       $data = $request->all();
       $exist = Payload::whereRaw("BINARY `payload_value` = ?", [$data['payload_value']])->get();
+      // dd($exist);
       if(sizeof($exist) > 0 && $data['status'] === 'create'){
         $this->response['error'] = 'Already Existed';
         $this->response['data'] = null;
