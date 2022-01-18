@@ -35,6 +35,21 @@ class SMSController extends APIController
     }
   }
 
+  public function sendPlainMessage($data, $returnFlag = null){
+    $params = array(
+      "username" => env('SMS_USERNAME'),
+      "password" => env('SMS_PASSWORD'),
+      "shortcode_mask" => env('SMS_SENDER_ID'),
+      "msisdn" => $data['msisdn'],
+      "content" => $data['message'],
+      "minute_validity" => 2
+    );
+    $this->curl($this->baseUrl, $params);
+    if($returnFlag != null){
+      return response()->json(json_decode($this->response));
+    }
+  }
+
   public function otp($params){
     $this->curl($this->baseUrlOTP, $params);
     return response()->json(json_decode($this->response));
