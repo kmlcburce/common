@@ -21,15 +21,27 @@ class SMSController extends APIController
   }
 
   public function sendDirect($data, $returnFlag = null){
-    $pin = 123123;
-    $validity = 2;
-    $refCode = 123456;
     $params = array(
       "username" => env('SMS_USERNAME'),
       "password" => env('SMS_PASSWORD'),
       "shortcode_mask" => env('SMS_SENDER_ID'),
       "msisdn" => $data['msisdn'],
-      "content" => "OTP: ".$pin." and valid for 2 minutes. Do not share with others.",
+      "content" => "OTP: ".$data['otp']." and valid for 2 minutes. Do not share with others.",
+      "minute_validity" => 2
+    );
+    $this->curl($this->baseUrl, $params);
+    if($returnFlag != null){
+      return response()->json(json_decode($this->response));
+    }
+  }
+
+  public function sendPlainMessage($data, $returnFlag = null){
+    $params = array(
+      "username" => env('SMS_USERNAME'),
+      "password" => env('SMS_PASSWORD'),
+      "shortcode_mask" => env('SMS_SENDER_ID'),
+      "msisdn" => $data['msisdn'],
+      "content" => $data['message'],
       "minute_validity" => 2
     );
     $this->curl($this->baseUrl, $params);
