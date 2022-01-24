@@ -188,6 +188,7 @@ class PayloadController extends APIController
     public function createWithImages(Request $request){
       $data = $request->all();
       $exist = Payload::whereRaw("BINARY `payload_value` = ?", [$data['payload_value']])->get();
+      // dd($exist);
       if(sizeof($exist) > 0 && $data['status'] === 'create'){
         $this->response['error'] = 'Already Existed';
         $this->response['data'] = null;
@@ -373,7 +374,7 @@ class PayloadController extends APIController
           $addedCategoryPerRoom = app('Increment\Hotel\Room\Http\RoomController')->retrieveByCategory($item['id']);
           $limitPerCategory = app('Increment\Hotel\Room\Http\AvailabilityController')->retrieveByPayloadPayloadValue('room_type', $item['id']);
           if($limitPerCategory !== null){
-            if(sizeof($addedCategoryPerRoom) < (int)$limitPerCategory['limit']){
+            if(sizeof($addedCategoryPerRoom) <= (int)$limitPerCategory['limit']){
               array_push($result, $item);
             }
           }
