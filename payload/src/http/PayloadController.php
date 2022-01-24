@@ -374,7 +374,7 @@ class PayloadController extends APIController
           $addedCategoryPerRoom = app('Increment\Hotel\Room\Http\RoomController')->retrieveByCategory($item['id']);
           $limitPerCategory = app('Increment\Hotel\Room\Http\AvailabilityController')->retrieveByPayloadPayloadValue('room_type', $item['id']);
           if($limitPerCategory !== null){
-            if(sizeof($addedCategoryPerRoom) < (int)$limitPerCategory['limit']){
+            if(sizeof($addedCategoryPerRoom) <= (int)$limitPerCategory['limit']){
               array_push($result, $item);
             }
           }
