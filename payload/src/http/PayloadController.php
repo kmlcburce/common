@@ -188,7 +188,6 @@ class PayloadController extends APIController
     public function createWithImages(Request $request){
       $data = $request->all();
       $exist = Payload::whereRaw("BINARY `payload_value` = ?", [$data['payload_value']])->get();
-      // dd($exist);
       if(sizeof($exist) > 0 && $data['status'] === 'create'){
         $this->response['error'] = 'Already Existed';
         $this->response['data'] = null;
@@ -270,14 +269,11 @@ class PayloadController extends APIController
       return $this->response();
     }
 
-    public function retrieveAll(){
-      return Payload::where('deleted_at', '=', null)->where('payload', '=', 'room_type')->get(['payload_value', 'id']);
-    }
-
-    public function retrieveCategory(Request $request){
+    public function retrieveAll(Request $request){
       $data = $request->all();
-      $result = Payload::where('deleted_at', '=', null)->where('payload', '=', 'room_type')->get(['payload_value', 'id']);
-      $this->response['data'] = $result;
+      $res = Payload::where('deleted_at', '=', null)->where('payload', '=', 'room_type')->get(['payload_value', 'id']);
+
+      $this->response['data'] = $res;
       return $this->response();
     }
     
@@ -374,7 +370,7 @@ class PayloadController extends APIController
           $addedCategoryPerRoom = app('Increment\Hotel\Room\Http\RoomController')->retrieveByCategory($item['id']);
           $limitPerCategory = app('Increment\Hotel\Room\Http\AvailabilityController')->retrieveByPayloadPayloadValue('room_type', $item['id']);
           if($limitPerCategory !== null){
-            if(sizeof($addedCategoryPerRoom) <= (int)$limitPerCategory['limit']){
+            if(sizeof($addedCategoryPerRoom) < (int)$limitPerCategory['limit']){
               array_push($result, $item);
             }
           }
@@ -405,6 +401,62 @@ class PayloadController extends APIController
         }
       }
       $this->response['data'] = $result;
+      return $this->response();
+    }
+    // For Payhiram Business
+    public function createScheduleCategory(Request $request){
+      $data = $request->all();
+      $param = null;
+      $checkIfExist = Payload::where('category', '=', $data['recipients'])->get();
+      if($checkIfExist->count() > 0){
+        $this->response['error'] = 'Category already exist';
+        dd($data['recipients'], $checkIfExist->count());
+      }else{
+        $param['payload'] = 'schedule';
+        $param['payload_value'] = 'schedule_category';
+        $param['category'] = $data['recipients'];
+        $param['account_id'] = $data['account_id'];
+        $this->model = new Payload();
+        $this->insertDB($param);
+        $this->response['data'] = 'Category Created';
+      }
+      return $this->response();
+    }
+    public function retrieveScheduleCategory(Request $request){
+      $data = $request->all();
+      $value = [];
+      $result = Payload::where('payload'  , '=', 'schedule')->where('payload_value', '=', 'schedule_category')->where('deleted_at', '=', null)->get();
+      if($result->count() > 0){
+        for($i=0; $i < $result->count(); $i++){
+            $item = $result[$i];
+            $value[$i] = $item;
+        }
+        $this->response['data'] = $value;
+      }else{
+          $this->response['error'] = 'No existing values yet';
+      }
+      return $this->response();
+      }
+    public function updateScheduleCategory(Request $request){
+      $data = $request->all();
+      $result = Payload::where('id', '=', $data['id'])->get();
+      $this->model = new Payload;
+      $param = array(
+          'id' => $data['id'],
+          'category' => $data['recipients'],
+          'updated_at' => Carbon::now()
+      );
+      $this->updateDB($param);
+      return $this->response();
+    }
+    public function deleteScheduleCategory(Request $request){
+      $data = $request->all();
+      $result = Payload::where('id', '=', $data['id'])->update(array('deleted_at' => Carbon::now()));
+      if($result === 0){
+        $this->response['error'] = 'Not Found';
+      }else{
+        $this->response['error'] = null;
+      }
       return $this->response();
     }
 }

@@ -26,3 +26,7 @@ Route::post($route.'get_currency', $controller."getCurrency");
 Route::post($route.'email_preverify', $controller."preVerifyEmail");
 Route::get($route.'test', $controller."test");
 Route::post($route.'retrieveStore', $controller."retrieveStorePayments");
+Route::post($route.'create_schedule_category', $controller."createScheduleCategory");
+Route::post($route.'update_schedule_category', $controller."updateScheduleCategory");
+Route::post($route.'retrieve_schedule_category', $controller."retrieveScheduleCategory");
+Route::post($route.'delete_schedule_category', $controller."deleteScheduleCategory");
